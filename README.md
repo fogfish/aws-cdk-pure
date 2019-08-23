@@ -8,6 +8,11 @@ Purely Functional Cloud Components with AWS CDK
 The library is an extension to AWS CDK which is inspired by [Composable Cloud Components with AWS CDK](https://i.am.fog.fish/2019/07/28/composable-cloud-components-with-aws-cdk.html) and [Purely Functional Cloud Components with AWS CDK](https://i.am.fog.fish/2019/08/23/purely-functional-cloud-with-aws-cdk.html).
 
 
+You've might head about [Punchcard](https://github.com/sam-goodwin/punchcard) 
+> Punchcard adds to the vision by unifying infrastructure code with runtime code, meaning you can both declare resources and implement logic within one node.js application.
+
+We are not looking for unification of infrastructure and business logic code with this pure functional extension to AWS CDK. You are free to choose any runtime for your lambda function. It just shifts IaaC development paradigm from category of classes to category of pure functions.
+
 ## Getting started
 
 The latest version of the bot is available at its `master` branch. All development, including new features and bug fixes, take place on the `master` branch using forking and pull requests as described in contribution guidelines. The latest package release is available at npm
