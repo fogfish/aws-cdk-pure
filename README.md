@@ -1,17 +1,16 @@
 # aws-cdk-pure
 
-Purely Functional Cloud Components with AWS CDK
+The library is a toolkit to develop purely functional and high-order cloud components with AWS CDK.
 
 
 ## Inspiration
 
-The library is an extension to AWS CDK which is inspired by [Composable Cloud Components with AWS CDK](https://i.am.fog.fish/2019/07/28/composable-cloud-components-with-aws-cdk.html) and [Purely Functional Cloud Components with AWS CDK](https://i.am.fog.fish/2019/08/23/purely-functional-cloud-with-aws-cdk.html).
+The library is an open-source extension to AWS CDK. It has been inspired by posts
+* [Composable Cloud Components with AWS CDK](https://i.am.fog.fish/2019/07/28/composable-cloud-components-with-aws-cdk.html)
+* [Purely Functional Cloud Components with AWS CDK](https://i.am.fog.fish/2019/08/23/purely-functional-cloud-with-aws-cdk.html).
 
+aws-cdk-pure is an utility for design and development of purely function cand higher-order components. Think of it as Hooks for React.
 
-You've might head about [Punchcard](https://github.com/sam-goodwin/punchcard) 
-> Punchcard adds to the vision by unifying infrastructure code with runtime code, meaning you can both declare resources and implement logic within one node.js application.
-
-We are not looking for unification of infrastructure and business logic code with this pure functional extension to AWS CDK. You are free to choose any runtime for your lambda function. It just shifts IaaC development paradigm from category of classes to category of pure functions.
 
 ## Getting started
 
@@ -25,7 +24,7 @@ npm install --save aws-cdk-pure
 
 AWS development kit do not implement a pure functional approach. The abstraction of cloud resources is exposed using class hierarchy, each type represents a "cloud component" and encapsulates everything AWS CloudFormation needs to create the component. A shift from category of classes to category of pure functions simplifies the development by **scraping boilerplate**. A pure function component of type `IaaC<T>` is a right approach to express semantic of Infrastructure as a Code.
 
-You cloud code will looks like these with this library. Please check the details about key features [here](https://i.am.fog.fish/2019/08/23/purely-functional-cloud-with-aws-cdk.html).
+You cloud code will looks like following snippet with this library. Please check the details about key features [here](https://i.am.fog.fish/2019/08/23/purely-functional-cloud-with-aws-cdk.html).
 
 ```typescript
 import { IaaC, root, join, flat, use, iaac, wrap } from 'aws-cdk-pure'
@@ -71,6 +70,13 @@ const app = new cdk.App()
 root(app, CodeBuildBot)
 app.synth()
 ```
+
+## Other libraries
+
+You've might head about [Punchcard](https://github.com/sam-goodwin/punchcard) 
+> Punchcard adds to the vision by unifying infrastructure code with runtime code, meaning you can both declare resources and implement logic within one node.js application.
+
+This library is not looking for unification of infrastructure and business logic code with this pure functional extension to AWS CDK. Instead, it promotes divercity of runtimes of your lambda functions. It just shifts IaaC development paradigm from category of classes to category of pure functions.
 
 See full example in [demo project](https://github.com/fogfish/code-build-bot).
 
