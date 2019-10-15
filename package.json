@@ -9,7 +9,7 @@
     "lint": "tslint -p tsconfig.json",
     "test": "mocha -r /usr/local/lib/node_modules/ts-node/register -C test/**.spec.ts",
     "prepare": "npm run build",
-    "prepublishOnly" : "npm run test && npm run lint"
+    "prepublishOnly": "npm run test && npm run lint"
   },
   "keywords": [],
   "author": "",
