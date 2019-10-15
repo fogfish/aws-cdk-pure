@@ -109,6 +109,7 @@ The library is [MIT](LICENSE) licensed and accepts contributions via GitHub pull
 npm install
 npm run test
 npm run lint
+npm run build
 ```
 
 ## License
