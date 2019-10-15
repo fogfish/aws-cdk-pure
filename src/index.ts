@@ -41,7 +41,7 @@ type Node<Prop, Type> = new (scope: Construct, id: string, props: Prop) => Type
  * @param pure purely functional definition of the component
  */
 export function iaac<Prop, Type>(f: Node<Prop, Type>): (pure: IaaC<Prop>) => IaaC<Type> {
-  return (pure) => (scope) => new f(scope, pure.name || 'XS', pure(scope))
+  return (pure) => (scope) => new f(scope, pure.name, pure(scope))
 }
 
 //
