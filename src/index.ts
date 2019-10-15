@@ -38,10 +38,10 @@ type Node<Prop, Type> = new (scope: Construct, id: string, props: Prop) => Type
  * "cloud component" and its property.
  * 
  * @param f "cloud component" class constructor 
- * @param iaac purely functional definition of the component
+ * @param pure purely functional definition of the component
  */
-export function iaac<Prop, Type>(f: Node<Prop, Type>): (fn: IaaC<Prop>) => IaaC<Type> {
-  return (fn) => (scope) => new f(scope, fn.name, fn(scope))
+export function iaac<Prop, Type>(f: Node<Prop, Type>): (pure: IaaC<Prop>) => IaaC<Type> {
+  return (pure) => (scope) => new f(scope, pure.name, pure(scope))
 }
 
 //
@@ -52,10 +52,26 @@ type Wrap<Prop, TypeA, TypeB> = new (scope: TypeA, props?: Prop) => TypeB
  * type safe cloud component factory for integrations
  * 
  * @param f "cloud component" class constructor
- * @param iaac purely functional definition of the component
+ * @param pure purely functional definition of the component
  */
-export function wrap<Prop, TypeA, TypeB>(f: Wrap<Prop, TypeA, TypeB>): (fn: IaaC<TypeA>) => IaaC<TypeB> {
-  return (fn) => (scope) => new f(fn(scope))
+export function wrap<Prop, TypeA, TypeB>(f: Wrap<Prop, TypeA, TypeB>): (pure: IaaC<TypeA>) => IaaC<TypeB> {
+  return (pure) => (scope) => new f(pure(scope))
+}
+
+//
+//
+type Include<Prop, Type> = (scope: Construct, id: string, props: Prop) => Type
+
+/**
+ * type safe cloud component factory. It takes a fromXXX lookup function of "cloud component"
+ * as input and returns another function, which builds a type-safe association between 
+ * "cloud component" and its property.
+ * 
+ * @param f lookup function
+ * @param pure purely functional definition of the component
+ */
+export function include<Prop, Type>(f: Include<Prop, Type>): (pure: IaaC<Prop>) => IaaC<Type> {
+  return (pure) => (scope) => f(scope, pure.name, pure(scope))
 }
 
 //
