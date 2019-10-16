@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { IaaC, root, join, iaac, use, flat } from '../src/index'
+import { IaaC, root, join, iaac, use } from '../src/index'
 import * as cdk from '@aws-cdk/core'
 
 const cf = iaac(cdk.CfnResource)
@@ -21,7 +21,7 @@ function ResourceC(): IaaC<cdk.CfnResource> {
 }
 
 function Stack(scope: cdk.Construct): cdk.Construct {
-  join(scope, flat(ResourceC))
+  join(scope, ResourceC)
   return scope
 }
 

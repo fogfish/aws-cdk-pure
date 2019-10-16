@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { IaaC, root, join, iaac, use, flat } from '../src/index'
+import { IaaC, root, join, iaac } from '../src/index'
 import * as cdk from '@aws-cdk/core'
 
 const cf = iaac(cdk.CfnResource)
@@ -13,15 +13,14 @@ function ResourceB(): cdk.CfnResourceProps {
 }
 
 function ResourceC(): IaaC<cdk.CfnResource> {
-  const a = cf(ResourceA)
-  const b = cf(ResourceB)
-  return use({ a })
-    .flatmap(x => use({ b }).effect(y => y.b.addOverride('Other', x.a.logicalId)))
-    .yield('b')
+  return cf(ResourceA)
+    .flatMap(a => 
+      cf(ResourceB).effect(b => b.addOverride('Other', a.logicalId))
+    )
 }
 
 function Stack(scope: cdk.Construct): cdk.Construct {
-  join(scope, flat(ResourceC))
+  join(scope, ResourceC)
   return scope
 }
 
