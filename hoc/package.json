@@ -1,7 +1,7 @@
 {
-  "name": "aws-cdk-pure",
-  "version": "1.0.0",
-  "description": "Purely Functional Cloud Components with AWS CDK",
+  "name": "aws-cdk-pure-hoc",
+  "version": "1.1.0",
+  "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -9,7 +9,8 @@
     "lint": "tslint -p tsconfig.json",
     "test": "mocha -r /usr/local/lib/node_modules/ts-node/register -C test/**.spec.ts",
     "prepare": "npm run build",
-    "prepublishOnly" : "npm run test && npm run lint"
+    "prepublishOnly": "npm run test && npm run lint",
+    "clean": "rm -Rf lib && rm -Rf node_modules"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +21,9 @@
   },
   "dependencies": {
     "@types/node": "*",
-    "@aws-cdk/core": "*"
+    "aws-cdk-pure": "*",
+    "@aws-cdk/core": "*",
+    "@aws-cdk/aws-secretsmanager": "*"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

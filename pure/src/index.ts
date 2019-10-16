@@ -26,7 +26,40 @@ import { App, Construct, Stack } from '@aws-cdk/core'
 
 //
 //
-export type IaaC<T> = (parent: Construct) => T
+export type IaaC<A> = (parent: Construct) => A
+
+export interface IPure<A> {
+  (parent: Construct): A
+  effect: (f: (x: A) => void) => IPure<A>
+  map: <B>(f: (x: A) => B) => IPure<B>
+  flatMap: <B>(f: (x: A) => IaaC<B>) => IPure<B>
+}
+
+export function unit<A>(f: IaaC<A>): IPure<A> {
+  const pure: IPure<A> = f as IPure<A>
+
+  pure.effect = (eff: (x: A) => void) =>
+    unit(
+      (scope: any) => {
+        const node = f(scope)
+        eff(node)
+        return node
+      }
+    )
+
+  pure.map = <B>(fmap: (x: A) => B) => 
+    unit(
+      (scope: any) => fmap(f(scope))
+    )
+
+  pure.flatMap = <B>(fmap: (x: A) => IaaC<B>) => 
+    unit(
+      (scope: any) => fmap(f(scope))(scope)
+    )
+
+  return pure
+}
+
 
 //
 //
@@ -38,10 +71,12 @@ type Node<Prop, Type> = new (scope: Construct, id: string, props: Prop) => Type
  * "cloud component" and its property.
  * 
  * @param f "cloud component" class constructor 
- * @param iaac purely functional definition of the component
+ * @param pure purely functional definition of the component
  */
-export function iaac<Prop, Type>(f: Node<Prop, Type>): (fn: IaaC<Prop>) => IaaC<Type> {
-  return (fn) => (scope) => new f(scope, fn.name, fn(scope))
+export function iaac<Prop, Type>(f: Node<Prop, Type>): (pure: IaaC<Prop>) => IPure<Type> {
+  return (pure) => unit(
+    (scope) => new f(scope, pure.name, pure(scope))
+  )
 }
 
 //
@@ -52,10 +87,30 @@ type Wrap<Prop, TypeA, TypeB> = new (scope: TypeA, props?: Prop) => TypeB
  * type safe cloud component factory for integrations
  * 
  * @param f "cloud component" class constructor
- * @param iaac purely functional definition of the component
+ * @param pure purely functional definition of the component
  */
-export function wrap<Prop, TypeA, TypeB>(f: Wrap<Prop, TypeA, TypeB>): (fn: IaaC<TypeA>) => IaaC<TypeB> {
-  return (fn) => (scope) => new f(fn(scope))
+export function wrap<Prop, TypeA, TypeB>(f: Wrap<Prop, TypeA, TypeB>): (pure: IaaC<TypeA>) => IPure<TypeB> {
+  return (pure) => unit(
+    (scope) => new f(pure(scope))
+  )
+}
+
+//
+//
+type Include<Prop, Type> = (scope: Construct, id: string, props: Prop) => Type
+
+/**
+ * type safe cloud component factory. It takes a fromXXX lookup function of "cloud component"
+ * as input and returns another function, which builds a type-safe association between 
+ * "cloud component" and its property.
+ * 
+ * @param f lookup function
+ * @param pure purely functional definition of the component
+ */
+export function include<Prop, Type>(f: Include<Prop, Type>): (pure: IaaC<Prop>) => IPure<Type> {
+  return (pure) => unit(
+    (scope) => f(scope, pure.name, pure(scope))
+  )
 }
 
 //
@@ -63,7 +118,35 @@ export function wrap<Prop, TypeA, TypeB>(f: Wrap<Prop, TypeA, TypeB>): (fn: IaaC
 type Product<T> = {[K in keyof T]: IaaC<T[K]>}
 type Pairs<T> = {[K in keyof T]: T[K]}
 
-function _compose<T extends Pairs<T>>(product: Product<T>): IaaC<Pairs<T>> {
+export interface IEffect<T extends Pairs<T>> {
+  (parent: Construct): T
+  effect: (f: (x: T) => void) => IEffect<T>
+  flatMap: (f: (x: T) => T) => IEffect<T>
+  yield: <K extends keyof T>(k: K) => IPure<T[K]>
+}
+
+function effect<T>(f: IaaC<T>): IEffect<T> {
+  const pure: IEffect<T> = f as IEffect<T>
+  pure.flatMap = (fmap: (x: T) => T) => 
+    effect(
+      (scope) => fmap(f(scope))
+    )
+
+  pure.effect = (eff: (x: T) => void) => 
+    effect(
+      (scope) => {
+        const node = f(scope)
+        eff(node)
+        return node
+      }
+    )
+
+  pure.yield = <K extends keyof T>(k: K) => unit((node) => f(node)[k])
+  
+  return pure
+}
+
+function compose<T extends Pairs<T>>(product: Product<T>): IaaC<Pairs<T>> {
   return (scope) => {
     const value = {} as T
     const keys = Reflect.ownKeys(product) as Array<(keyof T)>
@@ -74,31 +157,6 @@ function _compose<T extends Pairs<T>>(product: Product<T>): IaaC<Pairs<T>> {
   }
 }
 
-function _effect<O extends Pairs<O>>(eff: (x: O) => void, fn: IaaC<O>): IaaC<O> {
-  return (scope) => {
-    const node = fn(scope)
-    eff(node)
-    return node
-  }
-}
-
-function _yield<T extends Pairs<T>, K extends keyof T>(k: K, c: IaaC<T>): IaaC<T[K]> {
-  return (node) => c(node)[k]
-}
-
-class Effect<T extends Pairs<T>> {
-  private value: IaaC<T>
-  constructor(x: IaaC<T>){this.value = x}
-
-  public effect(f: (x:T) => void): Effect<T> {
-    return new Effect(_effect(f, this.value))
-  }
-
-  public yield<K extends keyof T>(k: K): IaaC<T[K]> {
-    return _yield(k, this.value)
-  } 
-}
-
 /**
  * The effect is a type-class that operates with product of individual `IaaC<T>`. 
  * It implements methods to apply effects to product of "cloud components" and 
@@ -107,17 +165,8 @@ class Effect<T extends Pairs<T>> {
  * 
  * @param resources product of `IaaC<T>` components
  */
-export function use<T extends Pairs<T>>(resources: Product<T>): Effect<T> {
-  return new Effect(_compose(resources))
-}
-
-/**
- * flatten the component
- * 
- * @param fn 
- */
-export function flat<T>(fn: IaaC<IaaC<T>>): IaaC<T> {
-  return (scope) => fn(scope)(scope)
+export function use<T extends Pairs<T>>(resources: Product<T>): IEffect<T> {
+  return effect(compose(resources))
 }
 
 /**
@@ -127,7 +176,8 @@ export function flat<T>(fn: IaaC<IaaC<T>>): IaaC<T> {
  * @param iaac purely functional definition of the component
  */
 export function join<T>(scope: Construct, fn: IaaC<T>): T {
-  return fn(scope)
+  const x = fn(scope) as any
+  return (typeof x === 'function') ? join(scope, x) : x
 }
 
 /**
