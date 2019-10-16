@@ -1,12 +1,12 @@
 /**
  * Pure Functional HoC: Config/Secret Management
  */
-import { IaaC, Pure, include } from 'aws-cdk-pure'
+import { IaaC, IPure, include } from 'aws-cdk-pure'
 import * as secret from '@aws-cdk/aws-secretsmanager'
 
 const vault = include(secret.Secret.fromSecretAttributes)
 
-export function String(key: Array<string>): Pure<string> {
+export function String(key: Array<string>): IPure<string> {
   return vault(Secret(key[0])).map(x => x.secretValueFromJson(key[1]).toString())
 }
 
