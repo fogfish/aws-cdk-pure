@@ -6,7 +6,7 @@ import * as config from '../src/config'
 const cf = iaac(cdk.CfnResource)
 
 function ResourceA(): IaaC<cdk.CfnResource> {
-  return config.String(['bucket', 'key']).flatMap(ResourceB)
+  return config.String('key', 'bucket').flatMap(ResourceB)
 }
 
 function ResourceB(type: string): IaaC<cdk.CfnResource> {
