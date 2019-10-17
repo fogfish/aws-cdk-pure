@@ -213,31 +213,6 @@ You've might head about [Punchcard](https://github.com/sam-goodwin/punchcard)
 This library is not looking for unification of infrastructure and business logic code with this pure functional extension to AWS CDK. Instead, it promotes diversity of runtime of your lambda functions. It just shifts IaaC development paradigm from category of classes to category of pure functions.
 
 
-## How To Contribute
-
-The library is [MIT](LICENSE) licensed and accepts contributions via GitHub pull requests:
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
-The development requires TypeScript and AWS CDK
-
-```bash
-npm install -g typescript ts-node aws-cdk
-```
-
-```bash
-git clone https://github.com/fogfish/aws-cdk-pure
-cd aws-cdk-pure/pure
-npm install
-npm run test
-npm run lint
-npm run build
-```
-
 ## License
 
 [![See LICENSE](https://img.shields.io/github/license/fogfish/aws-cdk-pure.svg?style=for-the-badge)](LICENSE)

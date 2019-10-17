@@ -10,36 +10,12 @@ The latest version of the library is available at its `master` branch. All devel
 npm install --save aws-cdk-pure-hoc
 ```
 
-## Design Pattern
+## High Order Components
 
-The library implements following design patterns
+The library implements a cloud design patterns using high order components: 
 
-* Configuration Management
+* [config](https://i.am.fog.fish/2019/10/18/retain-confidentiality-in-open-source-infrastructure.html) - The twelve-factor application principles advices environment variables to store the config. `config` HoC gives you a secure approach to retain confidentiality of your configuration. It is an environment variables managed through Key Vault service.
 
-## How To Contribute
-
-The library is [MIT](LICENSE) licensed and accepts contributions via GitHub pull requests:
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
-The development requires TypeScript and AWS CDK
-
-```bash
-npm install -g typescript ts-node aws-cdk
-```
-
-```bash
-git clone https://github.com/fogfish/aws-cdk-pure
-cd aws-cdk-pure/hoc
-npm install
-npm run test
-npm run lint
-npm run build
-```
 
 ## License
 
