@@ -121,15 +121,24 @@ type Pairs<T> = {[K in keyof T]: T[K]}
 export interface IEffect<T extends Pairs<T>> {
   (parent: Construct): T
   effect: (f: (x: T) => void) => IEffect<T>
-  flatMap: (f: (x: T) => T) => IEffect<T>
+  flatMap: <B>(f: (x: T) => Product<B>) => IEffect<T & B>
   yield: <K extends keyof T>(k: K) => IPure<T[K]>
 }
 
 function effect<T>(f: IaaC<T>): IEffect<T> {
   const pure: IEffect<T> = f as IEffect<T>
-  pure.flatMap = (fmap: (x: T) => T) => 
+  pure.flatMap = <B>(fmap: (x: T) => Product<B>) => 
     effect(
-      (scope) => fmap(f(scope))
+      (scope) => {
+        const node = f(scope)
+        const object = fmap(node)
+        const value = {} as B
+        const keys = Reflect.ownKeys(object) as Array<(keyof B)>
+        for (const key of keys) {
+          value[key] = object[key](scope)
+        }
+        return { ...node, ...value }
+      }
     )
 
   pure.effect = (eff: (x: T) => void) => 

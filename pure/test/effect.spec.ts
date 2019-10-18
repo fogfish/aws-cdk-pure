@@ -20,15 +20,26 @@ function ResourceC(): IaaC<cdk.CfnResource> {
     .yield('a')
 }
 
-function Stack(scope: cdk.Construct): cdk.Construct {
+function ResourceD(): IaaC<cdk.CfnResource> {
+  return use({ a: cf(ResourceA) })
+    .flatMap(_ => ({b: cf(ResourceB)}))
+    .yield('b')
+}
+
+function StackA(scope: cdk.Construct): cdk.Construct {
   join(scope, ResourceC)
+  return scope
+}
+
+function StackB(scope: cdk.Construct): cdk.Construct {
+  join(scope, ResourceD)
   return scope
 }
 
 it('apply effects to pure functional component',
   () => {
     const app = new cdk.App()
-    root(app, Stack, 'IaaC')
+    root(app, StackA, 'IaaC')
     const response = app.synth()
     const stack = response.getStack('IaaC')
     expect(stack.template).deep.equal(
@@ -40,4 +51,21 @@ it('apply effects to pure functional component',
       }
     )
   }
+)
+
+it('apply flatMap to pure functional component',
+() => {
+  const app = new cdk.App()
+  root(app, StackB, 'IaaC')
+  const response = app.synth()
+  const stack = response.getStack('IaaC')
+  expect(stack.template).deep.equal(
+    {
+      Resources: { 
+        ResourceA: { Type: 'TypeA' },
+        ResourceB: { Type: 'TypeB' },
+      }
+    }
+  )
+}
 )
