@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "lint": "tslint -p tsconfig.json",
-    "test": "mocha -r ts-node/register -C test/**.spec.ts",
+    "test": "nyc -i ts-node/register mocha -r ts-node/register -C test/**.spec.ts",
+    "cover": "coveralls",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test && npm run lint",
     "clean": "rm -Rf lib && rm -Rf node_modules"
@@ -32,6 +33,25 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "nyc": "*",
+    "coveralls": "*"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "all": true,
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src/**/!(*.test.*).ts"
+    ],
+    "reporter": [
+      "html",
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "report-dir": ".nyc_output/coverage"
   }
 }
