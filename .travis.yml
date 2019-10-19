@@ -5,8 +5,5 @@ node_js:
   - 12
   - 10
 
-before_script:
-  - cd pure && npm install
-
 script:
-  - cd pure && npm run test && npm run lint
+  - cd ./pure && npm install && npm run test && npm run lint
