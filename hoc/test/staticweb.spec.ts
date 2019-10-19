@@ -1,9 +1,12 @@
+/*
+
+see https://github.com/aws/aws-cdk/issues/4592
+
 import { expect } from 'chai'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
 import * as staticweb from '../src/staticweb'
 
-/* due to https://github.com/aws/aws-cdk/issues/4592
 it('build staticweb',
   () => {
     const app = new cdk.App()
