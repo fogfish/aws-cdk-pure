@@ -1,34 +1,114 @@
 import { expect } from 'chai'
-import { root, join, iaac } from '../src/index'
+import * as pure from '../src/index'
 import * as cdk from '@aws-cdk/core'
 
-const cf = iaac(cdk.CfnResource)
+const cf = pure.iaac(cdk.CfnResource)
 
-function ResourceA(): cdk.CfnResourceProps {
-  return { type: 'TypeA' }
+function MyA(): cdk.CfnResourceProps {
+  return { type: 'A' }
 }
 
-function ResourceB(): cdk.CfnResourceProps {
-  return { type: 'TypeB' }
+function MyB(): cdk.CfnResourceProps {
+  return { type: 'B' }
 }
+
+class Wrap {
+  constructor(c: cdk.CfnResource) {
+    c.addOverride('Some', 'Wrap')
+  }
+}
+const wf = pure.wrap(Wrap)
+
+class Lookup {
+  public static from(scope: cdk.Construct, name: string, props: {type: string}): cdk.CfnResource {
+    return new cdk.CfnResource(scope, name, { type: props.type })
+  }
+}
+const lf = pure.include(Lookup.from)
 
 function Stack(scope: cdk.Construct): cdk.Construct {
-  join(scope, cf(ResourceA))
-  join(scope, cf(ResourceB))
+  pure.join(scope, cf(MyA))
+  pure.join(scope, cf(MyB))
   return scope
 }
 
 it('attach components to stack using type safe factory',
   () => {
     const app = new cdk.App()
-    root(app, Stack, 'IaaC')
+    pure.root(app, Stack, 'IaaC')
     const response = app.synth()
     const stack = response.getStack('IaaC')
     expect(stack.template).deep.equal(
       {
         Resources: { 
-          ResourceA: { Type: 'TypeA' },
-          ResourceB: { Type: 'TypeB' },
+          MyA: { Type: 'A' },
+          MyB: { Type: 'B' },
+        }
+      }
+    )
+  }
+)
+
+it('attach components to stack using effects',
+  () => {
+    const app = new cdk.App()
+    const Stack = (): cdk.StackProps => ({ env: {} })
+    pure.join(app,
+      pure.iaac(cdk.Stack)(Stack)
+        .effect(x => {
+          pure.join(x, cf(MyA))
+          pure.join(x, cf(MyB))
+        })
+    )
+    const response = app.synth()
+    const stack = response.getStack('Stack')
+    expect(stack.template).deep.equal(
+      {
+        Resources: { 
+          MyA: { Type: 'A' },
+          MyB: { Type: 'B' },
+        }
+      }
+    )
+  }
+)
+
+it('attach components to stack using wrap',
+  () => {
+    const app = new cdk.App()
+    const Stack = (): cdk.StackProps => ({ env: {} })
+    pure.join(app,
+      pure.iaac(cdk.Stack)(Stack)
+        .effect(x => pure.join(x, wf(cf(MyA))))
+    )
+    const response = app.synth()
+    const stack = response.getStack('Stack')
+    expect(stack.template).deep.equal(
+      {
+        Resources: { 
+          MyA: { Type: 'A', Some: 'Wrap' },
+        }
+      }
+    )
+  }
+)
+
+it('attach components to stack using include',
+  () => {
+    const app = new cdk.App()
+    const Stack = (): cdk.StackProps => ({ env: {} })
+    const MyD   = (): {type: string} => ({ type: 'D' })
+
+    pure.join(app,
+      pure.iaac(cdk.Stack)(Stack)
+        .effect(x => pure.join(x, lf(MyD)))
+    )
+    const response = app.synth()
+    const stack = response.getStack('Stack')
+    expect(stack.template).deep.equal(
+      {
+        Resources: { 
+          MyD: { Type: 'D' },
         }
       }
     )
