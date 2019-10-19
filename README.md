@@ -1,10 +1,21 @@
 # aws-cdk-pure
 
-This is a toolkit to develop purely functional and high-order cloud components with [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/home.html). It is an extension to AWS CDK and has been inspired by the following posts
+The library is a toolkit for development of **high-order** and **purely functional** components with [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/home.html).
+
+[![Build Status](https://secure.travis-ci.org/fogfish/aws-cdk-pure.svg?branch=master)](http://travis-ci.org/fogfish/aws-cdk-pure)
+[![Git Hub](https://secure.travis-ci.org/github/last-commit/fogfish/aws-cdk-pure.svg)](http://travis-ci.org/fogfish/aws-cdk-pure)
+[![npm](https://img.shields.io/npm/v/aws-cdk-pure?label=aws-cdk-pure)](https://www.npmjs.com/package/aws-cdk-pure) 
+[![npm](https://img.shields.io/npm/v/aws-cdk-pure-hoc?label=aws-cdk-pure-hoc)](https://www.npmjs.com/package/aws-cdk-pure-hoc) 
+
+
+## Inspiration
+
+The purely functional extension to AWS CDK and has been inspired by the following posts
 * [Composable Cloud Components with AWS CDK](https://i.am.fog.fish/2019/07/28/composable-cloud-components-with-aws-cdk.html)
 * [Purely Functional Cloud Components with AWS CDK](https://i.am.fog.fish/2019/08/23/purely-functional-cloud-with-aws-cdk.html).
 
 `aws-cdk-pure` is an utility for design and development of purely functional and higher-order components. You know React Hooks! Think of it as **hooks for your cloud infrastructure**.
+
 
 ## Getting Started
 
