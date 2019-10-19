@@ -4,8 +4,8 @@ The library is a toolkit for development of **high-order** and **purely function
 
 [![Build Status](https://secure.travis-ci.org/fogfish/aws-cdk-pure.svg?branch=master)](http://travis-ci.org/fogfish/aws-cdk-pure)
 [![Git Hub](https://img.shields.io/github/last-commit/fogfish/aws-cdk-pure.svg)](http://travis-ci.org/fogfish/aws-cdk-pure)
-[![npm](https://img.shields.io/npm/v/aws-cdk-pure?label=aws-cdk-pure)](https://www.npmjs.com/package/aws-cdk-pure) 
-[![npm](https://img.shields.io/npm/v/aws-cdk-pure-hoc?label=aws-cdk-pure-hoc)](https://www.npmjs.com/package/aws-cdk-pure-hoc) 
+[![npm](https://img.shields.io/npm/v/aws-cdk-pure?label=pure)](https://www.npmjs.com/package/aws-cdk-pure) 
+[![npm](https://img.shields.io/npm/v/aws-cdk-pure-hoc?label=hoc)](https://www.npmjs.com/package/aws-cdk-pure-hoc) 
 
 
 ## Inspiration
@@ -20,8 +20,11 @@ The purely functional extension to AWS CDK and has been inspired by the followin
 ## Getting Started
 
 This repository implements TypeScript libraries for cloud development. Please see its details and guidelines in corresponding README.md files
-* [aws-cdk-pure](pure) - a toolkit for purely functional and high-order cloud components development.
-* [aws-cdk-pure-hoc](hoc) - implements reusable cloud design patterns as purely functional high-order components. Use them as building blocks for your cloud infrastructure.  
+
+* [aws-cdk-pure](pure) - a core part of the toolkit. It defines types and functional primitives required for hight-order components development. It maintain a slim dependencies towards other library, only `@aws-cdk/core` is used.
+
+* [aws-cdk-pure-hoc](hoc) - implements reusable purely functional high-order components. These components are building blocks and design patterns for your cloud infrastructure.  
+
 
 ## How To Contribute
 
