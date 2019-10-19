@@ -12,6 +12,20 @@ function MyB(): cdk.CfnResourceProps {
   return { type: 'B' }
 }
 
+class Wrap {
+  constructor(c: cdk.CfnResource) {
+    c.addOverride('Some', 'Wrap')
+  }
+}
+const wf = pure.wrap(Wrap)
+
+class Lookup {
+  public static from(scope: cdk.Construct, name: string, props: {type: string}): cdk.CfnResource {
+    return new cdk.CfnResource(scope, name, { type: props.type })
+  }
+}
+const lf = pure.include(Lookup.from)
+
 function Stack(scope: cdk.Construct): cdk.Construct {
   pure.join(scope, cf(MyA))
   pure.join(scope, cf(MyB))
@@ -53,6 +67,48 @@ it('attach components to stack using effects',
         Resources: { 
           MyA: { Type: 'A' },
           MyB: { Type: 'B' },
+        }
+      }
+    )
+  }
+)
+
+it('attach components to stack using wrap',
+  () => {
+    const app = new cdk.App()
+    const Stack = (): cdk.StackProps => ({ env: {} })
+    pure.join(app,
+      pure.iaac(cdk.Stack)(Stack)
+        .effect(x => pure.join(x, wf(cf(MyA))))
+    )
+    const response = app.synth()
+    const stack = response.getStack('Stack')
+    expect(stack.template).deep.equal(
+      {
+        Resources: { 
+          MyA: { Type: 'A', Some: 'Wrap' },
+        }
+      }
+    )
+  }
+)
+
+it('attach components to stack using include',
+  () => {
+    const app = new cdk.App()
+    const Stack = (): cdk.StackProps => ({ env: {} })
+    const MyD   = (): {type: string} => ({ type: 'D' })
+
+    pure.join(app,
+      pure.iaac(cdk.Stack)(Stack)
+        .effect(x => pure.join(x, lf(MyD)))
+    )
+    const response = app.synth()
+    const stack = response.getStack('Stack')
+    expect(stack.template).deep.equal(
+      {
+        Resources: { 
+          MyD: { Type: 'D' },
         }
       }
     )
