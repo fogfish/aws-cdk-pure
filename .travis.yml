@@ -6,4 +6,5 @@ node_js:
   - 10
 
 script:
-  - cd ./pure && npm install && npm run lint && npm run cover
+  - cd ./pure && npm install && npm run lint && npm run test
+  - cd ./pure && npm run cover

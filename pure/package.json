@@ -8,7 +8,7 @@
     "build": "tsc",
     "lint": "tslint -p tsconfig.json",
     "test": "nyc -i ts-node/register mocha -r ts-node/register -C test/**.spec.ts",
-    "cover": "nyc -i ts-node/register mocha -r ts-node/register -C test/**.spec.ts | coveralls",
+    "cover": "nyc report --reporter=text-lcov | coveralls",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test && npm run lint",
     "clean": "rm -Rf lib && rm -Rf node_modules"
