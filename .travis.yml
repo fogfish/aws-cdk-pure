@@ -1,0 +1,9 @@
+dist: bionic
+
+language: node_js
+node_js:
+  - 12
+  - 10
+
+script:
+  - cd pure && npm run test && npm run lint
