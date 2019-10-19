@@ -3,7 +3,7 @@
 The library is a toolkit for development of **high-order** and **purely functional** components with [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/home.html).
 
 [![Build Status](https://secure.travis-ci.org/fogfish/aws-cdk-pure.svg?branch=master)](http://travis-ci.org/fogfish/aws-cdk-pure)
-[![Git Hub](https://secure.travis-ci.org/github/last-commit/fogfish/aws-cdk-pure.svg)](http://travis-ci.org/fogfish/aws-cdk-pure)
+[![Git Hub](https://img.shields.io/github/last-commit/fogfish/aws-cdk-pure.svg)](http://travis-ci.org/fogfish/aws-cdk-pure)
 [![npm](https://img.shields.io/npm/v/aws-cdk-pure?label=aws-cdk-pure)](https://www.npmjs.com/package/aws-cdk-pure) 
 [![npm](https://img.shields.io/npm/v/aws-cdk-pure-hoc?label=aws-cdk-pure-hoc)](https://www.npmjs.com/package/aws-cdk-pure-hoc) 
 
