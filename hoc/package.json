@@ -1,13 +1,13 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "lint": "tslint -p tsconfig.json",
-    "test": "mocha -r /usr/local/lib/node_modules/ts-node/register -C test/**.spec.ts",
+    "test": "nyc -i ts-node/register mocha -r ts-node/register -C test/**.spec.ts",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test && npm run lint",
     "clean": "rm -Rf lib && rm -Rf node_modules"
@@ -21,9 +21,14 @@
   },
   "dependencies": {
     "@types/node": "*",
-    "aws-cdk-pure": "*",
+    "aws-cdk-pure": "^1.2.0",
     "@aws-cdk/core": "*",
-    "@aws-cdk/aws-secretsmanager": "*"
+    "@aws-cdk/aws-secretsmanager": "*",
+    "@aws-cdk/aws-certificatemanager": "*",
+    "@aws-cdk/aws-cloudfront": "*",
+    "@aws-cdk/aws-s3": "*",
+    "@aws-cdk/aws-route53": "*",
+    "@aws-cdk/aws-route53-targets": "*"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",
@@ -34,6 +39,24 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "nyc": "*"
+  },
+  "nyc": {
+    "check-coverage": false,
+    "all": true,
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src/**/!(*.test.*).ts"
+    ],
+    "reporter": [
+      "html",
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "report-dir": ".nyc_output/coverage"
   }
 }

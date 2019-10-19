@@ -1,34 +1,30 @@
 import { expect } from 'chai'
-import { join, root, iaac, IaaC } from 'aws-cdk-pure'
+import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
 import * as config from '../src/config'
 
-const cf = iaac(cdk.CfnResource)
-
-function ResourceA(): IaaC<cdk.CfnResource> {
-  return config.String('key', 'bucket').flatMap(ResourceB)
+function Config(): pure.IaaC<cdk.CfnResource> {
+  return config.String('key', 'bucket').flatMap(Component)
 }
 
-function ResourceB(type: string): IaaC<cdk.CfnResource> {
-  const ResourceB = (): cdk.CfnResourceProps => ({ type })
-  return cf(ResourceB)
-}
-
-function Stack(stack: cdk.Construct): cdk.Construct {
-  join(stack, ResourceA)
-  return stack
+function Component(type: string): pure.IaaC<cdk.CfnResource> {
+  const cf = pure.iaac(cdk.CfnResource)
+  const MyA = (): cdk.CfnResourceProps => ({ type })
+  return cf(MyA)
 }
 
 it('fetch config from secret manager',
   () => {
     const app = new cdk.App()
-    root(app, Stack, 'IaaC')
-    const response = app.synth()
-    const stack = response.getStack('IaaC')
+    const Stack = (): cdk.StackProps => ({ env: {} })
+    pure.join(app,
+      pure.iaac(cdk.Stack)(Stack).effect(x => pure.join(x, Config))
+    )
+    const stack = app.synth().getStack('Stack')
     expect(stack.template).deep.equal(
       {
         Resources: {
-          ResourceB: {
+          MyA: {
             Type: '{{resolve:secretsmanager:bucket:SecretString:key::}}'
           }
         }
