@@ -10,3 +10,8 @@ script:
   - npm install
   - npm run lint
   - npm run test
+
+  - cd ../hoc
+  - npm install
+  - npm run lint
+  - npm run test
