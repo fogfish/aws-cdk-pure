@@ -3,9 +3,9 @@
  */
 import * as acm from '@aws-cdk/aws-certificatemanager'
 import * as cdn from '@aws-cdk/aws-cloudfront'
-import * as s3 from '@aws-cdk/aws-s3'
 import * as dns from '@aws-cdk/aws-route53'
 import * as target from '@aws-cdk/aws-route53-targets'
+import * as s3 from '@aws-cdk/aws-s3'
 import * as cdk from '@aws-cdk/core'
 import * as pure from 'aws-cdk-pure'
 
@@ -53,10 +53,10 @@ function SiteOrigin(site: string): pure.IPure<s3.Bucket> {
   const iaac = pure.iaac(s3.Bucket)
   const Origin = () => ({
     bucketName: site,
-    removalPolicy: cdk.RemovalPolicy.DESTROY,
-    websiteIndexDocument: 'index.html',
-    websiteErrorDocument: 'error.html',
     publicReadAccess: true,
+    removalPolicy: cdk.RemovalPolicy.DESTROY,
+    websiteErrorDocument: 'error.html',
+    websiteIndexDocument: 'index.html',
   })
   return iaac(Origin)
 }
@@ -65,41 +65,41 @@ function SiteOrigin(site: string): pure.IPure<s3.Bucket> {
 function SiteCDN(site: string, acmCertRef: string, s3BucketSource: s3.IBucket): pure.IPure<cdn.CloudFrontWebDistribution> {
   const iaac = pure.iaac(cdn.CloudFrontWebDistribution)
   const CDN = (): cdn.CloudFrontWebDistributionProps => ({
+    aliasConfiguration: {
+      acmCertRef,
+      names: [ site ],
+      securityPolicy: cdn.SecurityPolicyProtocol.TLS_V1_2_2018,
+      sslMethod: cdn.SSLMethod.SNI,
+    },
     httpVersion: cdn.HttpVersion.HTTP1_1,
-      aliasConfiguration: {
-        acmCertRef,
-        names: [ site ],
-        sslMethod: cdn.SSLMethod.SNI,
-        securityPolicy: cdn.SecurityPolicyProtocol.TLS_V1_2_2018,
-      },
-      originConfigs: [
-        {
-          s3OriginSource: {
-            s3BucketSource
-          },
-          behaviors : [
-            {
-              isDefaultBehavior: true,
-              defaultTtl: cdk.Duration.hours(24),
-              maxTtl: cdk.Duration.hours(24),
-              minTtl: cdk.Duration.seconds(0),
-              forwardedValues: {queryString: true}
-            }
-          ],
-        }
-      ]
+    originConfigs: [
+      {
+        behaviors : [
+          {
+            defaultTtl: cdk.Duration.hours(24),
+            forwardedValues: {queryString: true},
+            isDefaultBehavior: true,
+            maxTtl: cdk.Duration.hours(24),
+            minTtl: cdk.Duration.seconds(0),
+          }
+        ],
+        s3OriginSource: {
+          s3BucketSource
+        },
+      }
+    ]
   })
   return iaac(CDN)
 }
 
 //
-function SiteDNS(site: string, zone: dns.IHostedZone, cdn: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
+function SiteDNS(site: string, zone: dns.IHostedZone, cloud: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
   const iaac = pure.iaac(dns.ARecord)
   const DNS  = (): dns.ARecordProps => ({
-    zone,
-    ttl: cdk.Duration.seconds(60),
     recordName: site,
-    target: {aliasTarget: new target.CloudFrontTarget(cdn)}
+    target: {aliasTarget: new target.CloudFrontTarget(cloud)},
+    ttl: cdk.Duration.seconds(60),
+    zone,
   })
   return iaac(DNS)
 }
