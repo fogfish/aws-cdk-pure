@@ -1,0 +1,7 @@
+.nyc_output
+src
+test
+node_modules
+tsconfig.json
+tslint.json
+
