@@ -1,8 +1,7 @@
-// import { expect } from 'chai'
 import { expect, haveResource } from '@aws-cdk/assert'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
-import * as staticweb from '../src/staticweb'
+import { staticweb } from '../src/index'
 
 it('build Static Web Site with AWS CloudFront',
   () => {

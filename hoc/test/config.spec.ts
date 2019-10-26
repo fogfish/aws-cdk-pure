@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
-import * as config from '../src/config'
+import { config } from '../src/index'
 
 function Config(): pure.IaaC<cdk.CfnResource> {
   return config.String('key', 'bucket').flatMap(Component)
