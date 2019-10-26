@@ -53,4 +53,8 @@ const Site = staticweb.Gateway({
   subdomain: 'www',
   siteRoot: 'api/myapp'  // https://www.example.com/api/myapp static site endpoint
 })
+
+Site.effect(
+  (x: RestApi) => /* add other methods to rest api here */
+)
 ```
