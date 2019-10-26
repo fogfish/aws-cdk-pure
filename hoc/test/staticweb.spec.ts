@@ -65,6 +65,7 @@ it('build Static Web Site with AWS API Gateway',
       'AWS::ApiGateway::Resource',
       'AWS::ApiGateway::Method',
       'AWS::ApiGateway::DomainName',
+      'AWS::Route53::RecordSet',
     ]
     elements.forEach(x => expect(stack).to(haveResource(x)));
   }

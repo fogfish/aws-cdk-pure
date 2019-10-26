@@ -58,7 +58,7 @@ export function CloudFront(props: StaticSiteProps): pure.IPure<cdn.CloudFrontWeb
   return pure.use({ zone, origin })
     .flatMap(x => ({ cert: SiteCertificate(props, x.zone) }))
     .flatMap(x => ({ cdn: SiteCDN(props, x.cert.certificateArn, x.origin) }))
-    .flatMap(x => ({ dns: SiteDNS(props, x.zone, x.cdn) }))
+    .flatMap(x => ({ dns: CloudFrontDNS(props, x.zone, x.cdn) }))
     .yield('cdn')
 }
 
@@ -95,7 +95,7 @@ function SiteCDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.
 }
 
 //
-function SiteDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
+function CloudFrontDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
   const iaac = pure.iaac(dns.ARecord)
   const DNS  = (): dns.ARecordProps => ({
     recordName: site(props),
@@ -131,6 +131,7 @@ export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
     .flatMap(x => ({ role: SiteOriginAccessPolicy(x.origin) }))
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
     .flatMap(x => ({ content: SiteStaticContent(props, x.origin, x.role, x.gateway) }))
+    .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
     .yield('gateway')
 }
 
@@ -235,6 +236,17 @@ function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam
     .yield('content')
 }
 
+//
+function GatewayDNS(props: StaticSiteProps, zone: dns.IHostedZone, restapi: api.RestApi): pure.IPure<dns.ARecord> {
+  const iaac = pure.iaac(dns.ARecord)
+  const DNS  = (): dns.ARecordProps => ({
+    recordName: site(props),
+    target: {aliasTarget: new target.ApiGateway(restapi)},
+    ttl: cdk.Duration.seconds(60),
+    zone,
+  })
+  return iaac(DNS)
+}
 
 /******************************************************************************
  *
