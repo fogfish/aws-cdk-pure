@@ -12,11 +12,11 @@ npm install --save aws-cdk-pure-hoc
 
 ## High Order Components
 
-The library implements a cloud design patterns using high order components: 
+The library implements a cloud design patterns using high order components. See the **api specification** and usage snippets at [doc folder](doc/api.md): 
 
-* [config](https://i.am.fog.fish/2019/10/18/retain-confidentiality-in-open-source-infrastructure.html) - The twelve-factor application principles advices environment variables to store the config. `config` HoC gives you a secure approach to retain confidentiality of your configuration. It is an environment variables managed through Key Vault service.
+* [config](https://i.am.fog.fish/2019/10/18/retain-confidentiality-in-open-source-infrastructure.html) - The twelve-factor application principles advices environment variables to store the config. The HoC `config` gives you a secure approach to retain confidentiality of your configuration. It is an environment variables managed through Key Vault service.
 
-* [staticweb] - a serverless implementation of [static web design pattern](https://aws.amazon.com/getting-started/projects/host-static-website/).
+* [staticweb](doc/api.md) - a serverless implementation of [static web design pattern](https://aws.amazon.com/getting-started/projects/host-static-website/) using either AWS CloudFront or AWS Gateway API.
 
 
 ## License
