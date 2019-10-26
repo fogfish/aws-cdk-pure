@@ -13,6 +13,15 @@ function Component(type: string): pure.IaaC<cdk.CfnResource> {
   return cf(MyA)
 }
 
+it('config implements IPure<T> interface',
+  () => {
+    const c = config.String('key', 'bucket')
+    expect( c.effect )
+    expect( c.map )
+    expect( c.flatMap )
+  }
+)
+
 it('fetch config from secret manager',
   () => {
     const app = new cdk.App()

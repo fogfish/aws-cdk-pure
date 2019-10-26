@@ -122,7 +122,7 @@ function SiteDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn.Cloud
  * 
  * The site is defined as `subdomain.domain` (e.g. www.example.com)
  */
-export function Gateway(props: StaticSiteProps): pure.IaaC<api.RestApi> {
+export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
   const zone = SiteHostedZone(props.domain) 
   const origin = SiteOrigin(props, false)
 

@@ -1,7 +1,17 @@
 import { expect, haveResource } from '@aws-cdk/assert'
+import * as assert from 'chai'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
 import { staticweb } from '../src/index'
+
+it('staticweb.CloudFront implements IPure<T> interface',
+  () => {
+    const c = staticweb.CloudFront({domain: 'example.com', subdomain: 'www'})
+    assert.expect( c.effect )
+    assert.expect( c.map )
+    assert.expect( c.flatMap )
+  }
+)
 
 it('build Static Web Site with AWS CloudFront',
   () => {
@@ -22,6 +32,15 @@ it('build Static Web Site with AWS CloudFront',
       'AWS::Route53::RecordSet',
     ]
     elements.forEach(x => expect(stack).to(haveResource(x)));
+  }
+)
+
+it('staticweb.Gateway implements IPure<T> interface',
+  () => {
+    const c = staticweb.Gateway({domain: 'example.com', subdomain: 'www'})
+    assert.expect( c.effect )
+    assert.expect( c.map )
+    assert.expect( c.flatMap )
   }
 )
 
