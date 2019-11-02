@@ -180,19 +180,23 @@ function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam
       integrationResponses: [
         {
           selectionPattern: 'default',
-          statusCode: '500'
+          statusCode: '500',
         },
         {
           selectionPattern: '2\\d{2}',
-          statusCode: '200'
+          statusCode: '200',
+          responseParameters: {
+            "method.response.header.Content-Type": "integration.response.header.Content-Type",
+            "method.response.header.Content-Length": "integration.response.header.Content-Length",
+          },
         },
         {
           selectionPattern: '404',
-          statusCode: '404'
+          statusCode: '404',
         },
         {
           selectionPattern: '4\\d{2}',
-          statusCode: '403'
+          statusCode: '403',
         }
       ],
       passthroughBehavior: api.PassthroughBehavior.WHEN_NO_MATCH,
@@ -216,7 +220,13 @@ function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam
 
   const spec = {
     methodResponses: [
-      {statusCode: '200'},
+      {
+        statusCode: '200',
+        responseParameters: {
+          "method.response.header.Content-Type": true,
+          "method.response.header.Content-Length": true,
+        },
+      },
       {statusCode: '403'},
       {statusCode: '404'},
       {statusCode: '500'},
