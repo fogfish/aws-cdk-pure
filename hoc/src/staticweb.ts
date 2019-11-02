@@ -52,20 +52,20 @@ export interface StaticSiteProps {
  * The site is defined as `subdomain.domain` (e.g. www.example.com)
  */
 export function CloudFront(props: StaticSiteProps): pure.IPure<cdn.CloudFrontWebDistribution> {
-  const zone = SiteHostedZone(props.domain) 
-  const origin = SiteOrigin(props)
+  const zone = HostedZone(props.domain) 
+  const origin = Origin(props)
 
   return pure.use({ zone, origin })
-    .flatMap(x => ({ cert: SiteCertificate(props, x.zone) }))
-    .flatMap(x => ({ cdn: SiteCDN(props, x.cert.certificateArn, x.origin) }))
+    .flatMap(x => ({ cert: Certificate(props, x.zone) }))
+    .flatMap(x => ({ cdn: CDN(props, x.cert.certificateArn, x.origin) }))
     .flatMap(x => ({ dns: CloudFrontDNS(props, x.zone, x.cdn) }))
     .yield('cdn')
 }
 
 //
-function SiteCDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBucket): pure.IPure<cdn.CloudFrontWebDistribution> {
+function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBucket): pure.IPure<cdn.CloudFrontWebDistribution> {
   const iaac = pure.iaac(cdn.CloudFrontWebDistribution)
-  const CDN = (): cdn.CloudFrontWebDistributionProps => ({
+  const SiteCDN = (): cdn.CloudFrontWebDistributionProps => ({
     aliasConfiguration: {
       acmCertRef,
       names: [ site(props) ],
@@ -97,13 +97,13 @@ function SiteCDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.
 //
 function CloudFrontDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
   const iaac = pure.iaac(dns.ARecord)
-  const DNS  = (): dns.ARecordProps => ({
+  const SiteDNS  = (): dns.ARecordProps => ({
     recordName: site(props),
     target: {aliasTarget: new target.CloudFrontTarget(cloud)},
     ttl: cdk.Duration.seconds(60),
     zone,
   })
-  return iaac(DNS)
+  return iaac(SiteDNS)
 }
 
 /******************************************************************************
@@ -123,14 +123,14 @@ function CloudFrontDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn
  * The site is defined as `subdomain.domain` (e.g. www.example.com)
  */
 export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
-  const zone = SiteHostedZone(props.domain) 
-  const origin = SiteOrigin(props, false)
+  const zone = HostedZone(props.domain) 
+  const origin = Origin(props, false)
 
   return pure.use({ zone, origin })
-    .flatMap(x => ({ cert: SiteCertificate(props, x.zone) }))
-    .flatMap(x => ({ role: SiteOriginAccessPolicy(x.origin) }))
+    .flatMap(x => ({ cert: Certificate(props, x.zone) }))
+    .flatMap(x => ({ role: OriginAccessPolicy(x.origin) }))
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
-    .flatMap(x => ({ content: SiteStaticContent(props, x.origin, x.role, x.gateway) }))
+    .flatMap(x => ({ content: StaticContent(props, x.origin, x.role, x.gateway) }))
     .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
     .yield('gateway')
 }
@@ -155,9 +155,9 @@ function SiteGateway(props: StaticSiteProps, certificate: acm.ICertificate): pur
   return iaac(GW[fqdn])
 }
 
-function SiteOriginAccessPolicy(origin: s3.IBucket): pure.IaaC<iam.Role> {
+function OriginAccessPolicy(origin: s3.IBucket): pure.IaaC<iam.Role> {
   const role = pure.iaac(iam.Role)
-  const Role = (): iam.RoleProps => ({
+  const SiteRole = (): iam.RoleProps => ({
     assumedBy: new iam.ServicePrincipal('apigateway.amazonaws.com')
   })
 
@@ -168,10 +168,10 @@ function SiteOriginAccessPolicy(origin: s3.IBucket): pure.IaaC<iam.Role> {
     })
   )
 
-  return role(Role).effect(x => x.addToPolicy(ReadOnly()))
+  return role(SiteRole).effect(x => x.addToPolicy(ReadOnly()))
 }
 
-function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam.IRole, gw: api.RestApi): pure.IPure<api.AwsIntegration> {
+function StaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam.IRole, gw: api.RestApi): pure.IPure<api.AwsIntegration> {
   const iaac = pure.wrap(api.AwsIntegration)
   const content = (path: string) => (): api.AwsIntegrationProps => ({
     integrationHttpMethod: 'GET',
@@ -207,12 +207,12 @@ function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam
     path,
     service: 's3',
   })
-  const Content = content(
+  const SiteContent = content(
     props.originRoot 
       ? `${origin.bucketName}/${props.originRoot}/{key}`
       : `${origin.bucketName}/{key}`
   )
-  const Default = content(
+  const SiteDefault = content(
     props.originRoot 
       ? `${origin.bucketName}/${props.originRoot}/index.html`
       : `${origin.bucketName}/index.html`
@@ -237,7 +237,7 @@ function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam
   }
 
   const segments = props.siteRoot ? props.siteRoot.split('/').slice(1) : []
-  return pure.use({ content: iaac(Content), default: iaac(Default) })
+  return pure.use({ content: iaac(SiteContent), default: iaac(SiteDefault) })
     .effect(x => {
       const p = segments.reduce((acc, seg) => acc.addResource(seg), gw.root)
       p.addMethod('GET', x.default, spec)
@@ -249,13 +249,13 @@ function SiteStaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam
 //
 function GatewayDNS(props: StaticSiteProps, zone: dns.IHostedZone, restapi: api.RestApi): pure.IPure<dns.ARecord> {
   const iaac = pure.iaac(dns.ARecord)
-  const DNS  = (): dns.ARecordProps => ({
+  const SiteDNS  = (): dns.ARecordProps => ({
     recordName: site(props),
     target: {aliasTarget: new target.ApiGateway(restapi)},
     ttl: cdk.Duration.seconds(60),
     zone,
   })
-  return iaac(DNS)
+  return iaac(SiteDNS)
 }
 
 /******************************************************************************
@@ -272,33 +272,33 @@ function site(props: StaticSiteProps): string {
 
 //
 // AWS S3 Bucket for Static Site(s)
-function SiteOrigin(props: StaticSiteProps, publicReadAccess: boolean = true): pure.IPure<s3.Bucket> {
+function Origin(props: StaticSiteProps, publicReadAccess: boolean = true): pure.IPure<s3.Bucket> {
   const iaac = pure.iaac(s3.Bucket)
-  const Origin = () => ({
+  const SiteS3 = () => ({
     bucketName: site(props),
     publicReadAccess,
     removalPolicy: cdk.RemovalPolicy.DESTROY,
     websiteErrorDocument: 'error.html',
     websiteIndexDocument: 'index.html',
   })
-  return iaac(Origin)
+  return iaac(SiteS3)
 }
 
 //
 // Lookup AWS Route 53 hosted zone the site
-function SiteHostedZone(domainName: DomainName): pure.IPure<dns.IHostedZone> {
+function HostedZone(domainName: DomainName): pure.IPure<dns.IHostedZone> {
   const awscdkIssue4592 = (parent: cdk.Construct, id: string, props: dns.HostedZoneProviderProps): dns.IHostedZone => (
     dns.HostedZone.fromLookup(parent, id, props)
   )
   const iaac = pure.include(awscdkIssue4592) // dns.HostedZone.fromLookup
-  const Ns = (): dns.HostedZoneProviderProps => ({ domainName })
-  return iaac(Ns)
+  const SiteHZone = (): dns.HostedZoneProviderProps => ({ domainName })
+  return iaac(SiteHZone)
 }
 
 //
 // Issues AWS Certificate for the site
-function SiteCertificate(props: StaticSiteProps, hostedZone: dns.IHostedZone): pure.IPure<acm.ICertificate> {
+function Certificate(props: StaticSiteProps, hostedZone: dns.IHostedZone): pure.IPure<acm.ICertificate> {
   const iaac = pure.iaac(acm.DnsValidatedCertificate)
-  const Ca = (): acm.DnsValidatedCertificateProps => ({ domainName: site(props), hostedZone })
-  return iaac(Ca).map(cert => cert)
+  const SiteCA = (): acm.DnsValidatedCertificateProps => ({ domainName: site(props), hostedZone })
+  return iaac(SiteCA).map(cert => cert)
 }
