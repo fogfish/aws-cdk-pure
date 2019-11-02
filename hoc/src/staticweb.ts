@@ -91,7 +91,7 @@ function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBuc
       }
     ]
   })
-  return iaac(CDN)
+  return iaac(SiteCDN)
 }
 
 //
