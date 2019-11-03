@@ -1,3 +1,10 @@
+//
+// Copyright (C) 2019 Dmitry Kolesnikov
+//
+// This file may be modified and distributed under the terms
+// of the MIT license.  See the LICENSE file for details.
+// https://github.com/fogfish/aws-cdk-pure
+//
 import { expect, haveResource } from '@aws-cdk/assert'
 import * as assert from 'chai'
 import * as pure from 'aws-cdk-pure'
