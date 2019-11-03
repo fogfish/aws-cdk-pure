@@ -16,6 +16,7 @@ import * as target from '@aws-cdk/aws-route53-targets'
 import * as s3 from '@aws-cdk/aws-s3'
 import * as cdk from '@aws-cdk/core'
 import * as pure from 'aws-cdk-pure'
+import * as hoc from './hoc'
 
 type DomainName = string
 export interface StaticSiteProps {
@@ -58,11 +59,11 @@ export interface StaticSiteProps {
  * The site is defined as `subdomain.domain` (e.g. www.example.com)
  */
 export function CloudFront(props: StaticSiteProps): pure.IPure<cdn.CloudFrontWebDistribution> {
-  const zone = HostedZone(props.domain) 
+  const zone = hoc.HostedZone(props.domain) 
   const origin = Origin(props)
 
   return pure.use({ zone, origin })
-    .flatMap(x => ({ cert: Certificate(props, x.zone) }))
+    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone) }))
     .flatMap(x => ({ cdn: CDN(props, x.cert.certificateArn, x.origin) }))
     .flatMap(x => ({ dns: CloudFrontDNS(props, x.zone, x.cdn) }))
     .yield('cdn')
@@ -129,11 +130,11 @@ function CloudFrontDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn
  * The site is defined as `subdomain.domain` (e.g. www.example.com)
  */
 export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
-  const zone = HostedZone(props.domain) 
+  const zone = hoc.HostedZone(props.domain) 
   const origin = Origin(props, false)
 
   return pure.use({ zone, origin })
-    .flatMap(x => ({ cert: Certificate(props, x.zone) }))
+    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone) }))
     .flatMap(x => ({ role: OriginAccessPolicy(x.origin) }))
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
     .flatMap(x => ({ content: StaticContent(props, x.origin, x.role, x.gateway) }))
@@ -288,23 +289,4 @@ function Origin(props: StaticSiteProps, publicReadAccess: boolean = true): pure.
     websiteIndexDocument: 'index.html',
   })
   return iaac(SiteS3)
-}
-
-//
-// Lookup AWS Route 53 hosted zone the site
-function HostedZone(domainName: DomainName): pure.IPure<dns.IHostedZone> {
-  const awscdkIssue4592 = (parent: cdk.Construct, id: string, props: dns.HostedZoneProviderProps): dns.IHostedZone => (
-    dns.HostedZone.fromLookup(parent, id, props)
-  )
-  const iaac = pure.include(awscdkIssue4592) // dns.HostedZone.fromLookup
-  const SiteHZone = (): dns.HostedZoneProviderProps => ({ domainName })
-  return iaac(SiteHZone)
-}
-
-//
-// Issues AWS Certificate for the site
-function Certificate(props: StaticSiteProps, hostedZone: dns.IHostedZone): pure.IPure<acm.ICertificate> {
-  const iaac = pure.iaac(acm.DnsValidatedCertificate)
-  const SiteCA = (): acm.DnsValidatedCertificateProps => ({ domainName: site(props), hostedZone })
-  return iaac(SiteCA).map(cert => cert)
 }
