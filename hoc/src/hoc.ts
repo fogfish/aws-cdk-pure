@@ -6,8 +6,8 @@
 // https://github.com/fogfish/aws-cdk-pure
 //
 // Common HoC
-import * as dns from '@aws-cdk/aws-route53'
 import * as acm from '@aws-cdk/aws-certificatemanager'
+import * as dns from '@aws-cdk/aws-route53'
 import * as cdk from '@aws-cdk/core'
 import * as pure from 'aws-cdk-pure'
 

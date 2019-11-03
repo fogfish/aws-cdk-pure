@@ -6,5 +6,5 @@
 // https://github.com/fogfish/aws-cdk-pure
 //
 export import config = require('./config')
-export import staticweb = require('./staticweb')
 export import gateway = require('./gateway')
+export import staticweb = require('./staticweb')

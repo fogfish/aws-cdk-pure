@@ -9,10 +9,10 @@
 //
 import * as api from '@aws-cdk/aws-apigateway'
 import * as acm from '@aws-cdk/aws-certificatemanager'
-import * as pure from 'aws-cdk-pure'
 import * as dns from '@aws-cdk/aws-route53'
 import * as target from '@aws-cdk/aws-route53-targets'
 import * as cdk from '@aws-cdk/core'
+import * as pure from 'aws-cdk-pure'
 import * as hoc from './hoc'
 
 export interface GatewayProps {
