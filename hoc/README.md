@@ -18,6 +18,8 @@ The library implements a cloud design patterns using high order components. See 
 
 * [staticweb](doc/api.md) - a serverless implementation of [static web design pattern](https://aws.amazon.com/getting-started/projects/host-static-website/) using either AWS CloudFront or AWS Gateway API.
 
+* [gateway](doc/api.md) - configures AWS API Gateway with your custom domain name and proper TLS certificate.
+
 
 ## License
 

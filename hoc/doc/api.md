@@ -2,6 +2,7 @@
 
 * [config](#config)
 * [staticweb](#staticweb)
+* [gateway](#gateway)
 
 
 ## config
@@ -52,9 +53,24 @@ const site = staticweb.Gateway({
   domain: 'example.com',
   subdomain: 'www',
   siteRoot: 'api/myapp'  // https://www.example.com/api/myapp static site endpoint
-})
+}).effect(
+  (x: RestApi) => /* add other methods to rest api here */
+)
+```
 
-site.effect(
+
+## gateway
+
+HoC deploys AWS API Gateway with TLS and DNS configurations, which makes api usable with your custom domain name and proper TLS certificate.
+
+```typescript
+import { gateway } from 'aws-cdk-pure-hoc'
+
+const api = gateway.Api({
+  domain: 'example.com',
+  subdomain: 'www',
+  siteRoot: 'api/myapp'  // https://www.example.com/api/myapp static site endpoint
+}).effect(
   (x: RestApi) => /* add other methods to rest api here */
 )
 ```
