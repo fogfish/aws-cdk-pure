@@ -5,7 +5,7 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-// Rest API Serverless Gateway HoC
+// API Gateway HoC
 //
 import * as api from '@aws-cdk/aws-apigateway'
 import * as acm from '@aws-cdk/aws-certificatemanager'
