@@ -1,6 +1,12 @@
-/**
- * Pure Functional HoC: Static Web 
- */
+//
+// Copyright (C) 2019 Dmitry Kolesnikov
+//
+// This file may be modified and distributed under the terms
+// of the MIT license.  See the LICENSE file for details.
+// https://github.com/fogfish/aws-cdk-pure
+//
+// Static Web HoC
+//
 import * as api from '@aws-cdk/aws-apigateway'
 import * as acm from '@aws-cdk/aws-certificatemanager'
 import * as cdn from '@aws-cdk/aws-cloudfront'

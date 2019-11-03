@@ -1,6 +1,12 @@
-/**
- * Pure Functional HoC: Config/Secret Management
- */
+//
+// Copyright (C) 2019 Dmitry Kolesnikov
+//
+// This file may be modified and distributed under the terms
+// of the MIT license.  See the LICENSE file for details.
+// https://github.com/fogfish/aws-cdk-pure
+//
+// Config/Secret Management HoC
+//
 import * as secret from '@aws-cdk/aws-secretsmanager'
 import { IaaC, include, IPure } from 'aws-cdk-pure'
 
