@@ -62,8 +62,9 @@ it('define CORS policy',
     //       API GW cannot be created w/o any methods
     const gw = gateway
       .Api({domain: 'example.com', subdomain: 'www', siteRoot: 'api/a/b/c/d'})
-      .map(x => x.root.addResource('test'))
-      .flatMap(gateway.CORS)
+      .effect(x => {
+        gateway.CORS(x.root.addResource('test'))
+      })
     pure.join(stack, gw)
 
     const elements = [

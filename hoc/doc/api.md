@@ -79,6 +79,7 @@ HoC implements a helper function to defined [CORS](https://developer.mozilla.org
 
 ```typescript
 const api = gateway.Api({/* ... */})
-  .map(x => x.root.addResource('test'))
-  .flatMap(gateway.CORS)
+  .effect(x => {
+    gateway.CORS(x.root.addResource('test'))
+  })
 ```

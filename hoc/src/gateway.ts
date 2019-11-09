@@ -117,12 +117,11 @@ export interface AccessControl {
 /**
  * add CORS handler to RestApi endpoint
  */
-export const CORS = (endpoint: api.Resource, props: AccessControl = {}): pure.IPure<api.Resource> => {
-  const iaac = pure.wrap(api.MockIntegration)
+export const CORS = (endpoint: api.Resource, props: AccessControl = {}): api.Resource => {
   const mthd = `'${props.method ? props.method.join(',') : 'GET,POST,PUT,DELETE,OPTIONS'}'`
   const head = `'${props.header ? props.header.join(',') : 'Content-Type,Authorization,Accept,Origin'}'`
   const origin = `'${props.origin || '*'}'`
-  const Mock = (): api.IntegrationOptions => ({
+  const mock = new api.MockIntegration({
     integrationResponses: [
       {
         responseParameters: {
@@ -155,9 +154,7 @@ export const CORS = (endpoint: api.Resource, props: AccessControl = {}): pure.IP
       },
     ],
   }
-
-  return iaac(Mock)
-    .map(x => endpoint.addMethod('OPTIONS', x, method))
-    .map(_ => endpoint)
+  endpoint.addMethod('OPTIONS', mock, method)
+  return endpoint
 }
 
