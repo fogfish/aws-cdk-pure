@@ -93,3 +93,71 @@ function site(props: GatewayProps): string {
 function stage(props: GatewayProps): string {
   return props.siteRoot ? props.siteRoot.split('/')[0] : 'api'
 }
+
+export interface AccessControl {
+  /**
+   * See Access-Control-Allow-Methods
+   * default GET, POST, PUT, DELETE, OPTIONS
+   */
+  method?: string[]
+
+  /**
+   * See Access-Control-Allow-Headers
+   * default Content-Type, Authorization, Accept, Origin
+   */
+  header?: string[]
+
+  /**
+   * Access-Control-Allow-Origin
+   * default *
+   */
+  origin?: string 
+}
+
+/**
+ * add CORS handler to RestApi endpoint
+ */
+export const CORS = (endpoint: api.Resource, props: AccessControl = {}): pure.IPure<api.Resource> => {
+  const iaac = pure.wrap(api.MockIntegration)
+  const mthd = `'${props.method ? props.method.join(',') : 'GET,POST,PUT,DELETE,OPTIONS'}'`
+  const head = `'${props.header ? props.header.join(',') : 'Content-Type,Authorization,Accept,Origin'}'`
+  const origin = `'${props.origin || '*'}'`
+  const Mock = (): api.IntegrationOptions => ({
+    integrationResponses: [
+      {
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Headers": head,
+          "method.response.header.Access-Control-Allow-Methods": mthd,
+          "method.response.header.Access-Control-Allow-Origin": origin,
+          "method.response.header.Access-Control-Max-Age": '600',
+        },
+        selectionPattern: '\\d{3}',
+        statusCode: '200',
+      },
+    ],
+    passthroughBehavior: api.PassthroughBehavior.WHEN_NO_MATCH,
+    requestTemplates: {
+      "application/json": "{\"statusCode\": 200}"
+    },
+  })
+  const method = {
+    methodResponses: [
+      {
+        responseModels: {
+          "application/json": new api.EmptyModel(),
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Headers": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
+        statusCode: '200',
+      },
+    ],
+  }
+
+  return iaac(Mock)
+    .map(x => endpoint.addMethod('OPTIONS', x, method))
+    .map(_ => endpoint)
+}
+

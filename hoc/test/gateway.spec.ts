@@ -50,3 +50,32 @@ it('build gateway.Api',
     elements.forEach(x => expect(stack).to(haveResource(x)));
   }
 )
+
+it('define CORS policy',
+  () => {
+    const app = new cdk.App()
+    const stack = new cdk.Stack(app, 'Stack', { 
+      env: { account: '000000000000', region: 'us-east-1'}
+    })
+
+    // Note: mock is required to pass the test
+    //       API GW cannot be created w/o any methods
+    const gw = gateway
+      .Api({domain: 'example.com', subdomain: 'www', siteRoot: 'api/a/b/c/d'})
+      .map(x => x.root.addResource('test'))
+      .flatMap(gateway.CORS)
+    pure.join(stack, gw)
+
+    const elements = [
+      'AWS::IAM::Policy',
+      'AWS::Lambda::Function',
+      'AWS::CloudFormation::CustomResource',
+      'AWS::ApiGateway::RestApi',
+      'AWS::ApiGateway::Deployment',
+      'AWS::ApiGateway::Stage',
+      'AWS::ApiGateway::DomainName',
+      'AWS::Route53::RecordSet',
+    ]
+    elements.forEach(x => expect(stack).to(haveResource(x)));
+  }
+)

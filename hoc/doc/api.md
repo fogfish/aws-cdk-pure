@@ -74,3 +74,11 @@ const api = gateway.Api({
   (x: RestApi) => /* add other methods to rest api here */
 )
 ```
+
+HoC implements a helper function to defined [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) policy
+
+```typescript
+const api = gateway.Api({/* ... */})
+  .map(x => x.root.addResource('test'))
+  .flatMap(gateway.CORS)
+```
