@@ -58,8 +58,6 @@ it('define CORS policy',
       env: { account: '000000000000', region: 'us-east-1'}
     })
 
-    // Note: mock is required to pass the test
-    //       API GW cannot be created w/o any methods
     const gw = gateway
       .Api({domain: 'example.com', subdomain: 'www', siteRoot: 'api/a/b/c/d'})
       .effect(x => {
