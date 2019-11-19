@@ -58,6 +58,8 @@ const site = staticweb.Gateway({
 )
 ```
 
+Please note, the static binary file handling requires special [configuration](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-payload-encodings.html) to the gateway. HoC uses `binaryMediaTypes` property to specify a list of binary content types. The default list is sufficient for single page react application. 
+
 
 ## gateway
 
