@@ -40,6 +40,16 @@ export interface StaticSiteProps {
    * The site path visible as a prefix
    */
   readonly siteRoot?: string
+
+  /**
+   * List of binary media types, default
+   *  - application/octet-stream
+   *  - binary/octet-stream
+   *  - image/png
+   *  - image/x-icon
+   *  - font/woff2
+   */
+  readonly binaryMediaTypes?: string[]
 }
 
 /******************************************************************************
@@ -147,6 +157,7 @@ function SiteGateway(props: StaticSiteProps, certificate: acm.ICertificate): pur
   const fqdn = site(props)
   const GW = {
     [fqdn]: (): api.RestApiProps => ({
+      binaryMediaTypes: MediaTypes(props),
       deploy: true,
       deployOptions: {
         stageName: props.siteRoot ? props.siteRoot.split('/')[0] : 'api'
@@ -160,6 +171,19 @@ function SiteGateway(props: StaticSiteProps, certificate: acm.ICertificate): pur
     })
   }
   return iaac(GW[fqdn])
+}
+
+function MediaTypes(props: StaticSiteProps): string[] {
+  if (!props.binaryMediaTypes) {
+    return [
+      "application/octet-stream",
+      "binary/octet-stream",
+      "image/png",
+      "image/x-icon",
+      "font/woff2",
+    ]
+  }
+  return props.binaryMediaTypes
 }
 
 function OriginAccessPolicy(origin: s3.IBucket): pure.IaaC<iam.Role> {
@@ -206,7 +230,7 @@ function StaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam.IRo
           statusCode: '403',
         }
       ],
-      passthroughBehavior: api.PassthroughBehavior.WHEN_NO_MATCH,
+      passthroughBehavior: api.PassthroughBehavior.WHEN_NO_TEMPLATES,
       requestParameters: {
         "integration.request.path.key": "method.request.path.key"
       },
