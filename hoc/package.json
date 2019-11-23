@@ -20,18 +20,18 @@
     "url": "https://github.com/fogfish/aws-cdk-pure.git"
   },
   "dependencies": {
-    "@types/node": "12.12.11",
-    "aws-cdk-pure": "^1.2.6",
-    "@aws-cdk/core": "1.17.0",
-    "@aws-cdk/aws-apigateway": "1.17.0",
-    "@aws-cdk/aws-iam": "1.17.0",
-    "@aws-cdk/aws-secretsmanager": "1.17.0",
-    "@aws-cdk/aws-certificatemanager": "1.17.0",
-    "@aws-cdk/aws-cloudfront": "1.17.0",
-    "@aws-cdk/aws-s3": "1.17.0",
-    "@aws-cdk/aws-route53": "1.17.0",
-    "@aws-cdk/aws-route53-targets": "1.17.0",
-    "@aws-cdk/assert": "1.17.0"
+    "@types/node": "12.12.12",
+    "aws-cdk-pure": "^1.2.7",
+    "@aws-cdk/core": "1.17.1",
+    "@aws-cdk/aws-apigateway": "1.17.1",
+    "@aws-cdk/aws-iam": "1.17.1",
+    "@aws-cdk/aws-secretsmanager": "1.17.1",
+    "@aws-cdk/aws-certificatemanager": "1.17.1",
+    "@aws-cdk/aws-cloudfront": "1.17.1",
+    "@aws-cdk/aws-s3": "1.17.1",
+    "@aws-cdk/aws-route53": "1.17.1",
+    "@aws-cdk/aws-route53-targets": "1.17.1",
+    "@aws-cdk/assert": "1.17.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.5",
