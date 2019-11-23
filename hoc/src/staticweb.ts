@@ -98,7 +98,7 @@ function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBuc
             minTtl: cdk.Duration.seconds(0),
           }
         ],
-        originPath: originPath(props),
+        originPath: (!props.sites || props.sites.length === 0) ? '/' : props.sites[0].origin,
         s3OriginSource: {
           s3BucketSource
         },
@@ -107,13 +107,6 @@ function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBuc
   })
   return iaac(SiteCDN)
 }
-
-function originPath(props: StaticSiteProps): string {
-  if (!props.sites || props.sites.length === 0) {
-    return '/'
-  }
-  return props.sites[0].origin
-} 
 
 //
 function CloudFrontDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
@@ -153,13 +146,13 @@ export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
     .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
 
-  if (props.sites) {
-    props.sites.forEach(spec =>
+  props.sites && props.sites
+    .forEach(spec =>
       gateway = gateway.flatMap(
         x => ({[spec.origin]: StaticContent(x.origin, x.role, x.gateway, spec)})
       )
     )
-  }
+
   return gateway.yield('gateway')
 }
 
