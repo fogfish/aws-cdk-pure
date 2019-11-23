@@ -146,12 +146,13 @@ export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
     .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
 
-  props.sites && props.sites
-    .forEach(spec =>
+  if (props.sites) {
+    props.sites.forEach(spec =>
       gateway = gateway.flatMap(
         x => ({[spec.origin]: StaticContent(x.origin, x.role, x.gateway, spec)})
       )
     )
+  }
 
   return gateway.yield('gateway')
 }
