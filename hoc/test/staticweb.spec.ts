@@ -58,7 +58,41 @@ it('build Static Web Site with AWS API Gateway',
       env: { account: '000000000000', region: 'us-east-1'}
     })
     pure.join(stack,
-      staticweb.Gateway({domain: 'example.com', subdomain: 'www', siteRoot: 'api/a/b/c/d'})
+      staticweb.Gateway({domain: 'example.com', subdomain: 'www', sites: [{origin: '', site: 'api/a/b/c/d'}]})
+    )
+
+    const elements = [
+      'AWS::S3::Bucket',
+      'AWS::IAM::Policy',
+      'AWS::Lambda::Function',
+      'AWS::CloudFormation::CustomResource',
+      'AWS::ApiGateway::RestApi',
+      'AWS::ApiGateway::Deployment',
+      'AWS::ApiGateway::Stage',
+      'AWS::ApiGateway::Resource',
+      'AWS::ApiGateway::Method',
+      'AWS::ApiGateway::DomainName',
+      'AWS::Route53::RecordSet',
+    ]
+    elements.forEach(x => expect(stack).to(haveResource(x)));
+  }
+)
+
+it('build Multiple Static Web Site with AWS API Gateway',
+  () => {
+    const app = new cdk.App()
+    const stack = new cdk.Stack(app, 'Stack', { 
+      env: { account: '000000000000', region: 'us-east-1'}
+    })
+    pure.join(stack,
+      staticweb.Gateway({
+        domain: 'example.com', 
+        subdomain: 'www', 
+        sites: [
+          {origin: 'd', site: 'api/a/b/c/d'},
+          {origin: 'e', site: 'api/a/b/c/e'},
+        ]
+      })
     )
 
     const elements = [

@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

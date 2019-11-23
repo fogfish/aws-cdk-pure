@@ -32,14 +32,11 @@ export interface StaticSiteProps {
   readonly subdomain?: string
 
   /**
-   * The root path at origin to serve static content
+   * associates path at origin and site prefix
+   *  - origin path is the absolute path at s3
+   *  - site path is the path prefix visible at site url
    */
-  readonly originRoot?: string
-
-  /**
-   * The site path visible as a prefix
-   */
-  readonly siteRoot?: string
+  readonly sites?: Array<{origin: string, site: string}>
 
   /**
    * List of binary media types, default
@@ -101,7 +98,7 @@ function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBuc
             minTtl: cdk.Duration.seconds(0),
           }
         ],
-        originPath: props.originRoot,
+        originPath: originPath(props),
         s3OriginSource: {
           s3BucketSource
         },
@@ -110,6 +107,13 @@ function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBuc
   })
   return iaac(SiteCDN)
 }
+
+function originPath(props: StaticSiteProps): string {
+  if (!props.sites || props.sites.length === 0) {
+    return '/'
+  }
+  return props.sites[0].origin
+} 
 
 //
 function CloudFrontDNS(props: StaticSiteProps, zone: dns.IHostedZone, cloud: cdn.CloudFrontWebDistribution): pure.IPure<dns.ARecord> {
@@ -143,13 +147,20 @@ export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
   const zone = hoc.HostedZone(props.domain) 
   const origin = Origin(props, false)
 
-  return pure.use({ zone, origin })
+  let gateway = pure.use({ zone, origin })
     .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone) }))
     .flatMap(x => ({ role: OriginAccessPolicy(x.origin) }))
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
-    .flatMap(x => ({ content: StaticContent(props, x.origin, x.role, x.gateway) }))
     .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
-    .yield('gateway')
+
+  if (props.sites) {
+    props.sites.forEach(spec =>
+      gateway = gateway.flatMap(
+        x => ({[spec.origin]: StaticContent(x.origin, x.role, x.gateway, spec)})
+      )
+    )
+  }
+  return gateway.yield('gateway')
 }
 
 function SiteGateway(props: StaticSiteProps, certificate: acm.ICertificate): pure.IPure<api.RestApi> {
@@ -160,7 +171,7 @@ function SiteGateway(props: StaticSiteProps, certificate: acm.ICertificate): pur
       binaryMediaTypes: MediaTypes(props),
       deploy: true,
       deployOptions: {
-        stageName: props.siteRoot ? props.siteRoot.split('/')[0] : 'api'
+        stageName: (props.sites && props.sites.length > 0) ? props.sites[0].site.split('/')[0] : 'api'
       },
       domainName: {
         certificate,
@@ -202,7 +213,12 @@ function OriginAccessPolicy(origin: s3.IBucket): pure.IaaC<iam.Role> {
   return role(SiteRole).effect(x => x.addToPolicy(ReadOnly()))
 }
 
-function StaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam.IRole, gw: api.RestApi): pure.IPure<api.AwsIntegration> {
+function StaticContent(
+  origin: s3.IBucket,
+  role: iam.IRole,
+  gw: api.RestApi,
+  root: {origin: string, site: string}
+): pure.IPure<api.AwsIntegration> {
   const iaac = pure.wrap(api.AwsIntegration)
   const content = (path: string) => (): api.AwsIntegrationProps => ({
     integrationHttpMethod: 'GET',
@@ -238,16 +254,8 @@ function StaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam.IRo
     path,
     service: 's3',
   })
-  const SiteContent = content(
-    props.originRoot 
-      ? `${origin.bucketName}/${props.originRoot}/{key}`
-      : `${origin.bucketName}/{key}`
-  )
-  const SiteDefault = content(
-    props.originRoot 
-      ? `${origin.bucketName}/${props.originRoot}/index.html`
-      : `${origin.bucketName}/index.html`
-  )
+  const SiteContent = content([origin.bucketName, root.origin, '{key}'].join('/'))
+  const SiteDefault = content([origin.bucketName, root.origin, 'index.html'].join('/'))
 
   const spec = {
     methodResponses: [
@@ -267,10 +275,11 @@ function StaticContent(props: StaticSiteProps, origin: s3.IBucket, role: iam.IRo
     },
   }
 
-  const segments = props.siteRoot ? props.siteRoot.split('/').slice(1) : []
+  const segments = root.site.split('/').slice(1)
   return pure.use({ content: iaac(SiteContent), default: iaac(SiteDefault) })
     .effect(x => {
-      const p = segments.reduce((acc, seg) => acc.addResource(seg), gw.root)
+      const p = segments.reduce(
+        (acc, seg) => acc.getResource(seg) || acc.addResource(seg), gw.root)
       p.addMethod('GET', x.default, spec)
       p.addResource('{key+}').addMethod('GET', x.content, spec)
     })
