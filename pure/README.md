@@ -204,6 +204,18 @@ use({ api, method })
   .yield('api')
 ```
 
+### Cross Stack References
+
+Often, it is required to create resource in one stack and pass its reference to another one.
+
+```typescript
+const root = new cdk.Stack(/* ... */)
+const shared = pure.join(root, MySharedResource())
+
+const other = new cdk.Stack(/* ... */)
+pure.join(other, MyResource(shared))
+```
+
 ## Example
 
 You cloud code will looks like following snippet with this library. 
