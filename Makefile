@@ -4,9 +4,13 @@ rel:
 		&& ncu -u \
 		&& npm version patch \
 		&& npm publish \
-		&& cd -
+		&& cd - \
+		&& git add pure
 	@cd hoc \
 		&& ncu -u \
 		&& npm version patch \
 		&& npm publish \
-		&& cd -
+		&& cd - \
+		&& git add hoc
+	@git commit -m "update deps"
+	@git push
