@@ -18,6 +18,9 @@ export interface IPure<A> {
   flatMap: <B>(f: (x: A) => IaaC<B>) => IPure<B>
 }
 
+/**
+ * Lifts IaaC type to IPure interface
+ */
 export function unit<A>(f: IaaC<A>): IPure<A> {
   const pure: IPure<A> = f as IPure<A>
 
@@ -31,14 +34,10 @@ export function unit<A>(f: IaaC<A>): IPure<A> {
     )
 
   pure.map = <B>(fmap: (x: A) => B) => 
-    unit(
-      (scope: any) => fmap(f(scope))
-    )
+    unit((scope: any) => fmap(f(scope)))
 
   pure.flatMap = <B>(fmap: (x: A) => IaaC<B>) => 
-    unit(
-      (scope: any) => fmap(f(scope))(scope)
-    )
+    unit((scope: any) => fmap(f(scope))(scope))
 
   return pure
 }

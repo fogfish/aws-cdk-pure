@@ -32,6 +32,11 @@ export interface StaticSiteProps {
   readonly subdomain?: string
 
   /**
+   * The identity (arn) of certificate used for the site
+   */
+  readonly tlsCertificate?: string
+
+  /**
    * associates path at origin and site prefix
    *  - origin path is the absolute path at s3
    *  - site path is the path prefix visible at site url
@@ -70,7 +75,7 @@ export function CloudFront(props: StaticSiteProps): pure.IPure<cdn.CloudFrontWeb
   const origin = Origin(props)
 
   return pure.use({ zone, origin })
-    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone) }))
+    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone, props.tlsCertificate) }))
     .flatMap(x => ({ cdn: CDN(props, x.cert.certificateArn, x.origin) }))
     .flatMap(x => ({ dns: CloudFrontDNS(props, x.zone, x.cdn) }))
     .yield('cdn')
@@ -141,7 +146,7 @@ export function Gateway(props: StaticSiteProps): pure.IPure<api.RestApi> {
   const origin = Origin(props, false)
 
   let gateway = pure.use({ zone, origin })
-    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone) }))
+    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone, props.tlsCertificate) }))
     .flatMap(x => ({ role: OriginAccessPolicy(x.origin) }))
     .flatMap(x => ({ gateway: SiteGateway(props, x.cert) }))
     .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
@@ -185,6 +190,7 @@ function MediaTypes(props: StaticSiteProps): string[] {
       "binary/octet-stream",
       "image/png",
       "image/x-icon",
+      "image/vnd.microsoft.icon",
       "font/woff2",
     ]
   }

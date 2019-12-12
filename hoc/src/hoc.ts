@@ -24,8 +24,14 @@ export function HostedZone(domainName: string): pure.IPure<dns.IHostedZone> {
 
 //
 // Issues AWS TLS Certificate for the domain
-export function Certificate(site: string, hostedZone: dns.IHostedZone): pure.IPure<acm.ICertificate> {
-  const iaac = pure.iaac(acm.DnsValidatedCertificate)
-  const SiteCA = (): acm.DnsValidatedCertificateProps => ({ domainName: site, hostedZone })
-  return iaac(SiteCA).map(cert => cert)
+export function Certificate(site: string, hostedZone: dns.IHostedZone, arn?: string): pure.IPure<acm.ICertificate> {
+  if (arn) {
+    const wrap = pure.include(acm.Certificate.fromCertificateArn)
+    const SiteCA = (): string => arn
+    return wrap(SiteCA)
+  } else {
+    const iaac = pure.iaac(acm.DnsValidatedCertificate)
+    const SiteCA = (): acm.DnsValidatedCertificateProps => ({ domainName: site, hostedZone })
+    return iaac(SiteCA)
+  }
 }

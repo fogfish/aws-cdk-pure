@@ -31,6 +31,11 @@ export interface GatewayProps {
    * The api path visible as a prefix, default is `api`
    */
   readonly siteRoot?: string
+
+  /**
+   * The identity (arn) of certificate used for the site
+   */
+  readonly tlsCertificate?: string
 }
 
 /**
@@ -46,7 +51,7 @@ export function Api(props: GatewayProps): pure.IPure<api.RestApi> {
   const zone = hoc.HostedZone(props.domain) 
 
   return pure.use({ zone })
-    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone) }))
+    .flatMap(x => ({ cert: hoc.Certificate(site(props), x.zone, props.tlsCertificate) }))
     .flatMap(x => ({ gateway: Gateway(props, x.cert) }))
     .flatMap(x => ({ dns: GatewayDNS(props, x.zone, x.gateway) }))
     .yield('gateway')
