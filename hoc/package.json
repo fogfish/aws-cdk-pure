@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,29 +20,29 @@
     "url": "https://github.com/fogfish/aws-cdk-pure.git"
   },
   "dependencies": {
-    "@types/node": "12.12.14",
-    "aws-cdk-pure": "^1.2.9",
-    "@aws-cdk/core": "1.18.0",
-    "@aws-cdk/aws-apigateway": "1.18.0",
-    "@aws-cdk/aws-iam": "1.18.0",
-    "@aws-cdk/aws-secretsmanager": "1.18.0",
-    "@aws-cdk/aws-certificatemanager": "1.18.0",
-    "@aws-cdk/aws-cloudfront": "1.18.0",
-    "@aws-cdk/aws-s3": "1.18.0",
-    "@aws-cdk/aws-route53": "1.18.0",
-    "@aws-cdk/aws-route53-targets": "1.18.0",
-    "@aws-cdk/assert": "1.18.0"
+    "@types/node": "12.12.21",
+    "aws-cdk-pure": "^1.2.11",
+    "@aws-cdk/core": "1.19.0",
+    "@aws-cdk/aws-apigateway": "1.19.0",
+    "@aws-cdk/aws-iam": "1.19.0",
+    "@aws-cdk/aws-secretsmanager": "1.19.0",
+    "@aws-cdk/aws-certificatemanager": "1.19.0",
+    "@aws-cdk/aws-cloudfront": "1.19.0",
+    "@aws-cdk/aws-s3": "1.19.0",
+    "@aws-cdk/aws-route53": "1.19.0",
+    "@aws-cdk/aws-route53-targets": "1.19.0",
+    "@aws-cdk/assert": "1.19.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.5",
+    "@types/chai": "^4.2.7",
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
     "prettier": "^1.19.1",
-    "ts-node": "^8.5.2",
+    "ts-node": "^8.5.4",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.2",
+    "typescript": "^3.7.4",
     "nyc": "*"
   },
   "nyc": {
