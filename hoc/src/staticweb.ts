@@ -41,7 +41,7 @@ export interface StaticSiteProps {
    *  - origin path is the absolute path at s3
    *  - site path is the path prefix visible at site url
    */
-  readonly sites?: Array<{origin: string, site: string}>
+  readonly sites?: {origin: string, site: string}[]
 
   /**
    * List of binary media types, default

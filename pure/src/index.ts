@@ -115,7 +115,7 @@ function effect<T>(f: IaaC<T>): IEffect<T> {
         const node = f(scope)
         const object = fmap(node)
         const value = {} as B
-        const keys = Reflect.ownKeys(object) as Array<(keyof B)>
+        const keys = Reflect.ownKeys(object) as (keyof B)[]
         for (const key of keys) {
           value[key] = object[key](scope)
         }
@@ -140,7 +140,7 @@ function effect<T>(f: IaaC<T>): IEffect<T> {
 function compose<T extends Pairs<T>>(product: Product<T>): IaaC<Pairs<T>> {
   return (scope) => {
     const value = {} as T
-    const keys = Reflect.ownKeys(product) as Array<(keyof T)>
+    const keys = Reflect.ownKeys(product) as (keyof T)[]
     for (const key of keys) {
       value[key] = product[key](scope)
     }

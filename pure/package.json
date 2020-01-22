@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure",
-  "version": "1.2.12",
+  "version": "1.2.17",
   "description": "Purely Functional Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,7 +12,12 @@
     "prepublishOnly": "npm run test && npm run lint",
     "clean": "rm -Rf lib && rm -Rf node_modules"
   },
-  "keywords": ["pure", "cdk", "functional", "infrastructure-as-code"],
+  "keywords": [
+    "pure",
+    "cdk",
+    "functional",
+    "infrastructure-as-code"
+  ],
   "author": "",
   "license": "MIT",
   "repository": {
@@ -30,7 +35,7 @@
     "mocha": "^7.0.0",
     "prettier": "^1.19.1",
     "ts-node": "^8.6.2",
-    "tslint": "^5.20.1",
+    "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.5",
     "nyc": "*"
