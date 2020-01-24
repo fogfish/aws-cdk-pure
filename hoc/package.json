@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,18 +20,18 @@
     "url": "https://github.com/fogfish/aws-cdk-pure.git"
   },
   "dependencies": {
-    "@types/node": "13.1.8",
-    "aws-cdk-pure": "^1.2.17",
-    "@aws-cdk/core": "1.21.1",
-    "@aws-cdk/aws-apigateway": "1.21.1",
-    "@aws-cdk/aws-iam": "1.21.1",
-    "@aws-cdk/aws-secretsmanager": "1.21.1",
-    "@aws-cdk/aws-certificatemanager": "1.21.1",
-    "@aws-cdk/aws-cloudfront": "1.21.1",
-    "@aws-cdk/aws-s3": "1.21.1",
-    "@aws-cdk/aws-route53": "1.21.1",
-    "@aws-cdk/aws-route53-targets": "1.21.1",
-    "@aws-cdk/assert": "1.21.1"
+    "@types/node": "13.5.0",
+    "aws-cdk-pure": "^1.2.18",
+    "@aws-cdk/core": "1.22.0",
+    "@aws-cdk/aws-apigateway": "1.22.0",
+    "@aws-cdk/aws-iam": "1.22.0",
+    "@aws-cdk/aws-secretsmanager": "1.22.0",
+    "@aws-cdk/aws-certificatemanager": "1.22.0",
+    "@aws-cdk/aws-cloudfront": "1.22.0",
+    "@aws-cdk/aws-s3": "1.22.0",
+    "@aws-cdk/aws-route53": "1.22.0",
+    "@aws-cdk/aws-route53-targets": "1.22.0",
+    "@aws-cdk/assert": "1.22.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",

@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure",
-  "version": "1.2.17",
+  "version": "1.2.18",
   "description": "Purely Functional Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -25,8 +25,8 @@
     "url": "https://github.com/fogfish/aws-cdk-pure.git"
   },
   "dependencies": {
-    "@types/node": "13.1.8",
-    "@aws-cdk/core": "1.21.1"
+    "@types/node": "13.5.0",
+    "@aws-cdk/core": "1.22.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",
