@@ -233,6 +233,7 @@ function StaticContent(
           responseParameters: {
             "method.response.header.Content-Length": "integration.response.header.Content-Length",
             "method.response.header.Content-Type": "integration.response.header.Content-Type",
+            "method.response.header.Cache-Control": "integration.response.header.Cache-Control",
           },
           selectionPattern: '2\\d{2}',
           statusCode: '200',
@@ -263,6 +264,7 @@ function StaticContent(
         responseParameters: {
           "method.response.header.Content-Length": true,
           "method.response.header.Content-Type": true,
+          "method.response.header.Cache-Control": true,
         },
         statusCode: '200',
       },
@@ -314,7 +316,7 @@ function site(props: StaticSiteProps): string {
 // AWS S3 Bucket for Static Site(s)
 function Origin(props: StaticSiteProps, publicReadAccess: boolean = true): pure.IPure<s3.Bucket> {
   const iaac = pure.iaac(s3.Bucket)
-  const SiteS3 = () => ({
+  const SiteS3 = (): s3.BucketProps => ({
     bucketName: site(props),
     publicReadAccess,
     removalPolicy: cdk.RemovalPolicy.DESTROY,

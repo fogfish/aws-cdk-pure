@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure",
-  "version": "1.2.19",
+  "version": "1.2.20",
   "description": "Purely Functional Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -37,7 +37,7 @@
     "ts-node": "^8.6.2",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.5",
+    "typescript": "^3.8.2",
     "nyc": "*"
   },
   "nyc": {
