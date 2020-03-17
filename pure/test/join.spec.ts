@@ -5,7 +5,6 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-import { expect } from 'chai'
 import * as pure from '../src/index'
 import * as cdk from '@aws-cdk/core'
 
@@ -29,7 +28,7 @@ it('attach components to stack',
     pure.root(app, Stack, 'IaaC')
     const response = app.synth()
     const stack = response.getStack('IaaC')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A' },

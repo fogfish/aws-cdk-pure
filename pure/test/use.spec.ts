@@ -5,7 +5,6 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-import { expect } from 'chai'
 import * as pure from '../src/index'
 import * as cdk from '@aws-cdk/core'
 
@@ -79,7 +78,7 @@ it('apply effects to product of pure functional component',
     const app = MyApp(HoC1())
     const response = app.synth()
     const stack = response.getStack('Stack')    
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A', Other: 'MyB' },
@@ -95,7 +94,7 @@ it('apply flatMap to product of pure functional component',
     const app = MyApp(HoC2())
     const response = app.synth()
     const stack = response.getStack('Stack')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A' },
@@ -112,7 +111,7 @@ it('apply nested flatMap to product of pure functional component',
     const app = MyApp(HoC3())
     const response = app.synth()
     const stack = response.getStack('Stack')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A' },

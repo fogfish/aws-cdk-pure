@@ -5,7 +5,6 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-import { expect } from 'chai'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
 import { config } from '../src/index'
@@ -37,7 +36,7 @@ it('fetch config from secret manager',
       pure.iaac(cdk.Stack)(Stack).effect(x => pure.join(x, Config))
     )
     const stack = app.synth().getStack('Stack')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: {
           MyA: {

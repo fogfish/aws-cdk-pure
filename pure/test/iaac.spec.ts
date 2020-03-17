@@ -5,7 +5,6 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-import { expect } from 'chai'
 import * as pure from '../src/index'
 import * as cdk from '@aws-cdk/core'
 
@@ -45,13 +44,13 @@ it('attach components to stack using type safe factory',
     pure.root(app, Stack, 'IaaC')
     const response = app.synth()
     const stack = response.getStack('IaaC')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A' },
           MyB: { Type: 'B' },
         }
-      }
+      },
     )
   }
 )
@@ -69,13 +68,13 @@ it('attach components to stack using effects',
     )
     const response = app.synth()
     const stack = response.getStack('Stack')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A' },
           MyB: { Type: 'B' },
         }
-      }
+      },
     )
   }
 )
@@ -90,12 +89,12 @@ it('attach components to stack using wrap',
     )
     const response = app.synth()
     const stack = response.getStack('Stack')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyA: { Type: 'A', Some: 'Wrap' },
         }
-      }
+      },
     )
   }
 )
@@ -112,12 +111,12 @@ it('attach components to stack using include',
     )
     const response = app.synth()
     const stack = response.getStack('Stack')
-    expect(stack.template).deep.equal(
+    expect(stack.template).toEqual(
       {
         Resources: { 
           MyD: { Type: 'D' },
         }
-      }
+      },
     )
   }
 )
