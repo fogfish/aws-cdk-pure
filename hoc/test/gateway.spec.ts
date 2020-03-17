@@ -5,8 +5,7 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-import { expect, haveResource } from '@aws-cdk/assert'
-import * as assert from 'chai'
+import * as assert from '@aws-cdk/assert'
 import * as api from '@aws-cdk/aws-apigateway'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
@@ -15,9 +14,9 @@ import { gateway } from '../src/index'
 it('gateway.Api implements IPure<T> interface',
   () => {
     const c = gateway.Api({domain: 'example.com', subdomain: 'www'})
-    assert.expect( c.effect )
-    assert.expect( c.map )
-    assert.expect( c.flatMap )
+    expect( c.effect ).toBeDefined()
+    expect( c.map ).toBeDefined()
+    expect( c.flatMap ).toBeDefined()
   }
 )
 
@@ -47,7 +46,7 @@ it('build gateway.Api',
       'AWS::ApiGateway::DomainName',
       'AWS::Route53::RecordSet',
     ]
-    elements.forEach(x => expect(stack).to(haveResource(x)));
+    elements.forEach(x => assert.expect(stack).to(assert.haveResource(x)));
   }
 )
 
@@ -75,6 +74,6 @@ it('define CORS policy',
       'AWS::ApiGateway::DomainName',
       'AWS::Route53::RecordSet',
     ]
-    elements.forEach(x => expect(stack).to(haveResource(x)));
+    elements.forEach(x => assert.expect(stack).to(assert.haveResource(x)));
   }
 )

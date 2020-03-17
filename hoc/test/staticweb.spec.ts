@@ -5,8 +5,7 @@
 // of the MIT license.  See the LICENSE file for details.
 // https://github.com/fogfish/aws-cdk-pure
 //
-import { expect, haveResource } from '@aws-cdk/assert'
-import * as assert from 'chai'
+import * as assert from '@aws-cdk/assert'
 import * as pure from 'aws-cdk-pure'
 import * as cdk from '@aws-cdk/core'
 import { staticweb } from '../src/index'
@@ -14,9 +13,9 @@ import { staticweb } from '../src/index'
 it('staticweb.CloudFront implements IPure<T> interface',
   () => {
     const c = staticweb.CloudFront({domain: 'example.com', subdomain: 'www'})
-    assert.expect( c.effect )
-    assert.expect( c.map )
-    assert.expect( c.flatMap )
+    expect( c.effect ).toBeDefined()
+    expect( c.map ).toBeDefined()
+    expect( c.flatMap ).toBeDefined()
   }
 )
 
@@ -38,16 +37,16 @@ it('build Static Web Site with AWS CloudFront',
       'AWS::CloudFront::Distribution',
       'AWS::Route53::RecordSet',
     ]
-    elements.forEach(x => expect(stack).to(haveResource(x)));
+    elements.forEach(x => assert.expect(stack).to(assert.haveResource(x)));
   }
 )
 
 it('staticweb.Gateway implements IPure<T> interface',
   () => {
     const c = staticweb.Gateway({domain: 'example.com', subdomain: 'www'})
-    assert.expect( c.effect )
-    assert.expect( c.map )
-    assert.expect( c.flatMap )
+    expect( c.effect ).toBeDefined()
+    expect( c.map ).toBeDefined()
+    expect( c.flatMap ).toBeDefined()
   }
 )
 
@@ -74,7 +73,7 @@ it('build Static Web Site with AWS API Gateway',
       'AWS::ApiGateway::DomainName',
       'AWS::Route53::RecordSet',
     ]
-    elements.forEach(x => expect(stack).to(haveResource(x)));
+    elements.forEach(x => assert.expect(stack).to(assert.haveResource(x)));
   }
 )
 
@@ -108,6 +107,6 @@ it('build Multiple Static Web Site with AWS API Gateway',
       'AWS::ApiGateway::DomainName',
       'AWS::Route53::RecordSet',
     ]
-    elements.forEach(x => expect(stack).to(haveResource(x)));
+    elements.forEach(x => assert.expect(stack).to(assert.haveResource(x)));
   }
 )
