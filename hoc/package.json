@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -29,17 +29,17 @@
   },
   "dependencies": {
     "@types/node": "13.9.1",
-    "aws-cdk-pure": "^1.3.0",
-    "@aws-cdk/core": "1.28.0",
-    "@aws-cdk/aws-apigateway": "1.28.0",
-    "@aws-cdk/aws-iam": "1.28.0",
-    "@aws-cdk/aws-secretsmanager": "1.28.0",
-    "@aws-cdk/aws-certificatemanager": "1.28.0",
-    "@aws-cdk/aws-cloudfront": "1.28.0",
-    "@aws-cdk/aws-s3": "1.28.0",
-    "@aws-cdk/aws-route53": "1.28.0",
-    "@aws-cdk/aws-route53-targets": "1.28.0",
-    "@aws-cdk/assert": "1.28.0"
+    "aws-cdk-pure": "^1.3.1",
+    "@aws-cdk/core": "1.30.0",
+    "@aws-cdk/aws-apigateway": "1.30.0",
+    "@aws-cdk/aws-iam": "1.30.0",
+    "@aws-cdk/aws-secretsmanager": "1.30.0",
+    "@aws-cdk/aws-certificatemanager": "1.30.0",
+    "@aws-cdk/aws-cloudfront": "1.30.0",
+    "@aws-cdk/aws-s3": "1.30.0",
+    "@aws-cdk/aws-route53": "1.30.0",
+    "@aws-cdk/aws-route53-targets": "1.30.0",
+    "@aws-cdk/assert": "1.30.0"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
