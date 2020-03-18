@@ -32,7 +32,8 @@ const tlsCertificate = pure.join(
 //
 // Application stack deploy application resource, which depends on
 // existing tlsCertificate. The application stack can be destroyed/deployed
-// unlimited amount of time. It would not cause re-create of certificate. 
+// unlimited amount of time. It would not cause re-create of certificate.
+//
 pure.join(
   new cdk.Stack(app, 'application', stack),
   hoc.staticweb.Gateway({
