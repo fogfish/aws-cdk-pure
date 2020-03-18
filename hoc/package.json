@@ -1,11 +1,11 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.7.0",
+  "version": "1.7.5",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsc",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --coverage",
     "prepare": "npm run build",

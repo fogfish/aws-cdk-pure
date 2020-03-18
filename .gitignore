@@ -1,4 +1,6 @@
-example/
+example/foobar/
 node_modules/
 lib/
 coverage/
+cdk.out/
+cdk.context.json

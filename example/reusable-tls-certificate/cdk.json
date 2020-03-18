@@ -1,0 +1,4 @@
+{
+  "app": "ts-node src/index",
+  "requireApproval": "never"
+}
