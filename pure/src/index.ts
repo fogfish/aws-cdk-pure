@@ -55,9 +55,9 @@ type Node<Prop, Type> = new (scope: Construct, id: string, props: Prop) => Type
  * @param f "cloud component" class constructor 
  * @param pure purely functional definition of the component
  */
-export function iaac<Prop, Type>(f: Node<Prop, Type>): (pure: IaaC<Prop>) => IPure<Type> {
-  return (pure) => unit(
-    (scope) => new f(scope, pure.name, pure(scope))
+export function iaac<Prop, Type>(f: Node<Prop, Type>): (pure: IaaC<Prop>, name?: string) => IPure<Type> {
+  return (pure, name) => unit(
+    (scope) => new f(scope, name || pure.name, pure(scope))
   )
 }
 
@@ -89,9 +89,9 @@ type Include<Prop, Type> = (scope: Construct, id: string, props: Prop) => Type
  * @param f lookup function
  * @param pure purely functional definition of the component
  */
-export function include<Prop, Type>(f: Include<Prop, Type>): (pure: IaaC<Prop>) => IPure<Type> {
-  return (pure) => unit(
-    (scope) => f(scope, pure.name, pure(scope))
+export function include<Prop, Type>(f: Include<Prop, Type>): (pure: IaaC<Prop>, name?: string) => IPure<Type> {
+  return (pure, name) => unit(
+    (scope) => f(scope, name || pure.name, pure(scope))
   )
 }
 

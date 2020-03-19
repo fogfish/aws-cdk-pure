@@ -20,6 +20,8 @@ The library implements a cloud design patterns using high order components. See 
 
 * [gateway](doc/api.md) - configures AWS API Gateway with your custom domain name and proper TLS certificate.
 
+* [actor](doc/api.md) - AWS Lambda Worked backed with SQS Queue
+
 
 ## License
 
