@@ -1,6 +1,6 @@
 {
   "name": "aws-cdk-pure-hoc",
-  "version": "1.7.11",
+  "version": "1.7.12",
   "description": "Purely Functional High Order Cloud Components with AWS CDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -28,7 +28,7 @@
     "url": "https://github.com/fogfish/aws-cdk-pure.git"
   },
   "dependencies": {
-    "@types/node": "13.13.5",
+    "@types/node": "14.0.14",
     "aws-cdk-pure": "*",
     "@aws-cdk/core": "*",
     "@aws-cdk/aws-apigateway": "*",
@@ -43,13 +43,13 @@
     "@aws-cdk/assert": "*"
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "jest": "^26.0.1",
-    "ts-jest": "^25.5.1",
+    "@types/jest": "^26.0.3",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.1",
     "prettier": "^2.0.5",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.5"
   }
 }
