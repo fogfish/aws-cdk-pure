@@ -11,7 +11,6 @@ import * as dns from '@aws-cdk/aws-route53'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as cdk from '@aws-cdk/core'
 import * as pure from 'aws-cdk-pure'
-import * as path from 'path'
 
 //
 // Lookup AWS Route 53 hosted zone for the domain
@@ -40,13 +39,13 @@ export function Certificate(site: string, hostedZone: dns.IHostedZone, arn?: str
 
 //
 // Bundles Golang Lambda function from source
-export function AssetCodeGo(src: string): lambda.Code {
-  return new lambda.AssetCode(src, { bundling: gocc(src) })
+export function AssetCodeGo(path: string): lambda.Code {
+  return new lambda.AssetCode('', { bundling: gocc(path) })
 }
 
-const gocc = (src: string): cdk.BundlingOptions => {
+const gocc = (path: string): cdk.BundlingOptions => {
   const gopath = process.env.GOPATH || '/go'
-  const fnpath = path.join(__dirname, src).split(gopath).join('')
+  const fnpath = path.split(gopath).join('')
 
   return {
     image: cdk.BundlingDockerImage.fromAsset(`${gopath}${fnpath}`),
