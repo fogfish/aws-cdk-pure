@@ -84,6 +84,22 @@ export function CloudFront(props: StaticSiteProps): pure.IPure<cdn.CloudFrontWeb
 //
 function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBucket): pure.IPure<cdn.CloudFrontWebDistribution> {
   const iaac = pure.iaac(cdn.CloudFrontWebDistribution)
+  const baseOrigin = {
+    behaviors : [
+      {
+        defaultTtl: cdk.Duration.hours(24),
+        forwardedValues: {queryString: true},
+        isDefaultBehavior: true,
+        maxTtl: cdk.Duration.hours(24),
+        minTtl: cdk.Duration.seconds(0),
+      }
+    ],
+    s3OriginSource: {
+      s3BucketSource
+    },
+  }
+  const rootOrigin = (!props.sites || props.sites.length === 0) ? baseOrigin : { originPath: props.sites[0].origin, ...baseOrigin }
+
   const SiteCDN = (): cdn.CloudFrontWebDistributionProps => ({
     aliasConfiguration: {
       acmCertRef,
@@ -92,23 +108,7 @@ function CDN(props: StaticSiteProps, acmCertRef: string, s3BucketSource: s3.IBuc
       sslMethod: cdn.SSLMethod.SNI,
     },
     httpVersion: cdn.HttpVersion.HTTP1_1,
-    originConfigs: [
-      {
-        behaviors : [
-          {
-            defaultTtl: cdk.Duration.hours(24),
-            forwardedValues: {queryString: true},
-            isDefaultBehavior: true,
-            maxTtl: cdk.Duration.hours(24),
-            minTtl: cdk.Duration.seconds(0),
-          }
-        ],
-        originPath: (!props.sites || props.sites.length === 0) ? '/' : props.sites[0].origin,
-        s3OriginSource: {
-          s3BucketSource
-        },
-      }
-    ]
+    originConfigs: [ rootOrigin ]
   })
   return iaac(SiteCDN)
 }
