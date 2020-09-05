@@ -11,6 +11,7 @@ import * as dns from '@aws-cdk/aws-route53'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as cdk from '@aws-cdk/core'
 import * as pure from 'aws-cdk-pure'
+import * as sys from 'child_process'
 
 //
 // Lookup AWS Route 53 hosted zone for the domain
@@ -43,14 +44,30 @@ export function AssetCodeGo(path: string): lambda.Code {
   return new lambda.AssetCode('', { bundling: gocc(path) })
 }
 
+const tryBundle = (outputDir: string, options: cdk.BundlingOptions): boolean => {
+  if (!options || !options.workingDirectory) {
+    return false
+  }
+
+  const pkg = options.workingDirectory.split('/go/src').join('')
+  // tslint:disable-next-line:no-console
+  console.log(`==> go build ${pkg}`)
+  sys.execSync(`GOCACHE=/tmp/go.amd64 GOOS=linux GOARCH=amd64 go build -o ${outputDir}/main ${pkg}`)
+  return true
+}
+
 const gocc = (path: string): cdk.BundlingOptions => {
   const gopath = process.env.GOPATH || '/go'
   const fnpath = path.split(gopath).join('')
 
   return {
-    image: cdk.BundlingDockerImage.fromAsset(`${gopath}${fnpath}`),
+    local: { tryBundle },
+    image: cdk.BundlingDockerImage.fromRegistry('golang'),
     command: ["go", "build", "-o", `${cdk.AssetStaging.BUNDLING_OUTPUT_DIR}/main`],
     user: 'root',
+    environment: {
+      "GOCACHE": "/go/cache",
+    },
     volumes: [
       {
         containerPath: '/go/src',
