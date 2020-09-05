@@ -36,6 +36,11 @@ export interface GatewayProps {
    * The identity (arn) of certificate used for the site
    */
   readonly tlsCertificate?: string
+
+  /**
+   * CORS specification
+   */
+  readonly corsPreflightOptions?: api.CorsOptions
 }
 
 /**
@@ -72,6 +77,7 @@ function Gateway(props: GatewayProps, certificate: acm.ICertificate): pure.IPure
       },
       endpointTypes: [api.EndpointType.REGIONAL],
       failOnWarnings: true,
+      defaultCorsPreflightOptions: props.corsPreflightOptions,
     })
   }
   return iaac(GW[fqdn])
