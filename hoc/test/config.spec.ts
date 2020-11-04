@@ -10,7 +10,7 @@ import * as cdk from '@aws-cdk/core'
 import { config } from '../src/index'
 
 function Config(): pure.IaaC<cdk.CfnResource> {
-  return config.String('key', 'bucket').flatMap(Component)
+  return config.String('key', 'arn:aws:secretsmanager:eu-west-1:000000000000:secret:bucket').flatMap(Component)
 }
 
 function Component(type: string): pure.IaaC<cdk.CfnResource> {
@@ -40,7 +40,7 @@ it('fetch config from secret manager',
       {
         Resources: {
           MyA: {
-            Type: '{{resolve:secretsmanager:bucket:SecretString:key::}}'
+            Type: '{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-1:000000000000:secret:bucket:SecretString:key::}}'
           }
         }
       }

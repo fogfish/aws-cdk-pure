@@ -49,7 +49,7 @@ const tryBundle = (outputDir: string, options: cdk.BundlingOptions): boolean => 
     return false
   }
 
-  const pkg = options.workingDirectory.split('/go/src').join('')
+  const pkg = options.workingDirectory.split('/go/src/').join('')
   // tslint:disable-next-line:no-console
   console.log(`==> go build ${pkg}`)
   sys.execSync(`GOCACHE=/tmp/go.amd64 GOOS=linux GOARCH=amd64 go build -o ${outputDir}/main ${pkg}`)
